@@ -1,5 +1,7 @@
 Easily batch render blender files without having to mess with command line. Drag and drop files in, or select them with the program's file explorer.
 
+*Note: When exporting, make sure to add res://Scripts/frame_range.py to the list of scripts to be exported. This is so the program can get the frame range of the file.
+
 TODO list:
 
 	[] Optional render output path override
