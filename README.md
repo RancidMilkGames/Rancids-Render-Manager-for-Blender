@@ -1,4 +1,4 @@
-Easily batch render blender files without having to mess with command line. Drag and drop files in, or select them with the program's file explorer.
+Easily batch render blender files without having to mess with command line. Drag and drop files in, or select them with the program's file explorer. UI made in Godot 4.
 
 TODO list:
 
