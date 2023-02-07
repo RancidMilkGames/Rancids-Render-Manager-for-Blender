@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://bc2jvb7yoq0by"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_po142"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_epogs"]
+
+[node name="OutputMessage" type="RichTextLabel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+focus_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_po142")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_epogs")
+fit_content = true
+selection_enabled = true

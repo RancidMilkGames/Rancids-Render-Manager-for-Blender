@@ -1,0 +1,589 @@
+[gd_scene load_steps=31 format=3 uid="uid://cwq8y4uu6p174"]
+
+[ext_resource type="Script" path="res://Scripts/main.gd" id="1_2ipsj"]
+[ext_resource type="FontFile" uid="uid://bb1ue8in033ye" path="res://Fonts/Montserrat_Alternates/MontserratAlternates-Medium.ttf" id="1_yl0ri"]
+[ext_resource type="Texture2D" uid="uid://dvfb8x4g7gx77" path="res://Images/Folder.png" id="2_5e67o"]
+[ext_resource type="PackedScene" uid="uid://br7mdbs5gojpn" path="res://Scenes/render_item.tscn" id="2_l6wa3"]
+[ext_resource type="Texture2D" uid="uid://d3anbxnd65383" path="res://Images/File Open.png" id="3_2a1ha"]
+[ext_resource type="Texture2D" uid="uid://bmmchxvls46j" path="res://Images/Search Icon.png" id="3_4c6h0"]
+[ext_resource type="Script" path="res://Scripts/running_dots.gd" id="4_cgtpe"]
+[ext_resource type="Script" path="res://Scripts/Mono.cs" id="6_2rmq8"]
+[ext_resource type="Texture2D" uid="uid://cqtu7y7e0ccrr" path="res://Images/Setting Gear Icon.png" id="6_wnh0w"]
+[ext_resource type="PackedScene" uid="uid://dpy481akxvajp" path="res://Scenes/setting_item.tscn" id="7_2fkv1"]
+[ext_resource type="Script" path="res://Scripts/output_scroll_container.gd" id="7_juvtn"]
+[ext_resource type="PackedScene" uid="uid://bc2jvb7yoq0by" path="res://Scenes/output_message.tscn" id="8_m7s6p"]
+[ext_resource type="Script" path="res://Scripts/config.gd" id="11_214hc"]
+[ext_resource type="Script" path="res://Scripts/tool_tip_override.gd" id="11_ghaik"]
+[ext_resource type="PackedScene" uid="uid://bkk7ags3cnpef" path="res://Scenes/About.tscn" id="14_r2lfv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nv76d"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.156863, 0.141176, 0.180392, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_78385"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.729412, 0.662745, 0.65098, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k1lfc"]
+bg_color = Color(0.25098, 0.396078, 0.407843, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.32549, 0.231373, 0.262745, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_xnsn0"]
+default_font = ExtResource("1_yl0ri")
+Button/colors/font_color = Color(1, 0.984314, 0.870588, 1)
+Button/colors/icon_normal_color = Color(1, 0.984314, 0.870588, 1)
+MarginContainer/constants/margin_bottom = 10
+MarginContainer/constants/margin_left = 10
+MarginContainer/constants/margin_right = 10
+MarginContainer/constants/margin_top = 10
+Panel/styles/panel = SubResource("StyleBoxFlat_nv76d")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_nv76d")
+ProgressBar/colors/font_color = Color(0.156863, 0.141176, 0.180392, 1)
+ProgressBar/styles/background = SubResource("StyleBoxFlat_78385")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_k1lfc")
+
+[sub_resource type="Theme" id="Theme_tfpa4"]
+Label/colors/font_color = Color(1, 0.984314, 0.870588, 1)
+Label/colors/font_outline_color = Color(0.435294, 0.615686, 0.505882, 1)
+Label/constants/outline_size = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tdew8"]
+content_margin_left = 25.0
+content_margin_top = 10.0
+content_margin_right = 25.0
+content_margin_bottom = 10.0
+bg_color = Color(0.741176, 0.317647, 0.427451, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_uycae"]
+font_size = 72
+font_color = Color(0.690196, 0.819608, 0.545098, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i3o85"]
+content_margin_left = 5.0
+content_margin_right = 5.0
+bg_color = Color(0.741176, 0.317647, 0.427451, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uix7d"]
+content_margin_left = 5.0
+content_margin_right = 5.0
+bg_color = Color(0.435294, 0.615686, 0.505882, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w3rkw"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.552941, 0.482353, 0.501961, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.219608, 0.207843, 0.321569, 1)
+border_blend = true
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_se188"]
+font_color = Color(1, 0.984314, 0.870588, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o7rev"]
+content_margin_left = 10.0
+content_margin_right = 10.0
+bg_color = Color(0.858824, 0.839216, 0.792157, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cdew4"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.345098, 0.282353, 0.368627, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.219608, 0.207843, 0.321569, 1)
+border_blend = true
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8vuy0"]
+bg_color = Color(0.552941, 0.482353, 0.501961, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_05tvr"]
+font_color = Color(1, 0.984314, 0.870588, 1)
+
+[node name="Base" type="ColorRect" node_paths=PackedStringArray("config", "render_item_container", "add_item_button", "install_loc_line", "running_panel", "settings", "about")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_xnsn0")
+color = Color(0.32549, 0.231373, 0.262745, 1)
+script = ExtResource("1_2ipsj")
+config = NodePath("Config")
+render_item_scene = ExtResource("2_l6wa3")
+render_item_container = NodePath("VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer")
+add_item_button = NodePath("VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer/Add")
+install_loc_line = NodePath("VSplitContainer/Panel/VBoxContainer/HBoxContainer/InstallLoc")
+running_panel = NodePath("VSplitContainer/Panel")
+settings = NodePath("PanelContainer")
+about = NodePath("About")
+
+[node name="VSplitContainer" type="VSplitContainer" parent="."]
+custom_minimum_size = Vector2(0, 690)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -620.0
+offset_top = -345.0
+offset_right = 620.0
+offset_bottom = 345.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="VSplitContainer"]
+custom_minimum_size = Vector2(800, 400)
+layout_mode = 2
+size_flags_vertical = 3
+theme = SubResource("Theme_tfpa4")
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VSplitContainer/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = 46.0
+offset_right = 250.0
+offset_bottom = 104.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VSplitContainer/Panel/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VSplitContainer/Panel/VBoxContainer2/VBoxContainer2"]
+layout_mode = 2
+text = "Current Progress:"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CurrentProgressBar" type="ProgressBar" parent="VSplitContainer/Panel/VBoxContainer2/VBoxContainer2"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/Panel/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VSplitContainer/Panel/VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+text = "Total Progress"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TotalProgressBar" type="ProgressBar" parent="VSplitContainer/Panel/VBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+
+[node name="StopProcess" type="Button" parent="VSplitContainer/Panel/VBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_tdew8")
+text = "Stop"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -109.0
+offset_right = 20.0
+offset_bottom = -69.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VSplitContainer/Panel/HBoxContainer"]
+layout_mode = 2
+text = "Running"
+label_settings = SubResource("LabelSettings_uycae")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="dots" type="Label" parent="VSplitContainer/Panel/HBoxContainer" node_paths=PackedStringArray("main_screen", "timer")]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+text = "."
+label_settings = SubResource("LabelSettings_uycae")
+vertical_alignment = 1
+script = ExtResource("4_cgtpe")
+main_screen = NodePath("../../VBoxContainer")
+timer = NodePath("Timer")
+
+[node name="Timer" type="Timer" parent="VSplitContainer/Panel/HBoxContainer/dots"]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="InstallLoc" type="LineEdit" parent="VSplitContainer/Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.984314, 0.870588, 1)
+theme_override_colors/font_placeholder_color = Color(0.741176, 0.317647, 0.427451, 1)
+placeholder_text = "Blender Executable path - Must set before rendering"
+caret_blink = true
+caret_blink_interval = 0.5
+
+[node name="SearchBlendInstall" type="Button" parent="VSplitContainer/Panel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+icon = ExtResource("3_4c6h0")
+expand_icon = true
+
+[node name="EndSpacer" type="Control" parent="VSplitContainer/Panel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VSplitContainer/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="VSplitContainer/Panel/VBoxContainer/ScrollContainer"]
+custom_minimum_size = Vector2(1225, 300)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="RenderItemContainer" type="VBoxContainer" parent="VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Add" type="Button" parent="VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 16
+text = "+ Add "
+
+[node name="Add" type="HBoxContainer" parent="VSplitContainer/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Folder" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Add Folder"
+icon = ExtResource("2_5e67o")
+expand_icon = true
+
+[node name="File" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Add File"
+icon = ExtResource("3_2a1ha")
+expand_icon = true
+
+[node name="Settings" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Settings"
+icon = ExtResource("6_wnh0w")
+expand_icon = true
+
+[node name="Spacer" type="Control" parent="VSplitContainer/Panel/VBoxContainer/Add"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Clear" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.203922, 0.294118, 0.407843, 1)
+theme_override_colors/font_outline_color = Color(0.156863, 0.141176, 0.180392, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_i3o85")
+text = "Clear"
+
+[node name="Start" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.203922, 0.294118, 0.407843, 1)
+theme_override_colors/font_outline_color = Color(0.156863, 0.141176, 0.180392, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_uix7d")
+text = "Start"
+
+[node name="EndSpacer" type="Control" parent="VSplitContainer/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VSplitContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/PanelContainer/MarginContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Panel" type="PanelContainer" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_w3rkw")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Output:"
+label_settings = SubResource("LabelSettings_se188")
+
+[node name="ClearLogs" type="Button" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.156863, 0.141176, 0.180392, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_o7rev")
+text = "Clear Logs"
+
+[node name="Panel2" type="PanelContainer" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 33)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_cdew4")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel2" node_paths=PackedStringArray("output_container")]
+layout_mode = 2
+horizontal_scroll_mode = 0
+script = ExtResource("7_juvtn")
+output_container = NodePath("VBoxContainer")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Mono" type="Node" parent="."]
+script = ExtResource("6_2rmq8")
+_outputItemScene = ExtResource("8_m7s6p")
+
+[node name="PanelContainer" type="PopupPanel" parent="."]
+initial_position = 1
+title = "Settings"
+size = Vector2i(315, 223)
+theme_override_styles/panel = SubResource("StyleBoxFlat_8vuy0")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+offset_right = 315.0
+offset_bottom = 223.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="KillWProgram" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
+layout_mode = 2
+
+[node name="Label" parent="PanelContainer/MarginContainer/VBoxContainer/KillWProgram" index="0"]
+text = "Blender persist on close"
+
+[node name="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/KillWProgram" index="2"]
+tooltip_text = "When on, close the Background Blender process when closing this program. If set to off, Blender will keep rendering even if this program is closed."
+
+[node name="Shutdown" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
+layout_mode = 2
+
+[node name="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Shutdown" index="0"]
+text = "Shutdown on Finish"
+
+[node name="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/Shutdown" index="2"]
+tooltip_text = "Will attempt to shutdown the computer when all rendering is done."
+
+[node name="Threads" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
+layout_mode = 2
+
+[node name="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Threads" index="0"]
+text = "Run on separate thread"
+
+[node name="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/Threads" index="2"]
+tooltip_text = "Setting to on will keep this program from freezing while running renders. On will be slightly slower, but allows for immediate log feedback and killing the rendering process."
+button_pressed = true
+
+[node name="CurrentProgress" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
+layout_mode = 2
+
+[node name="Label" parent="PanelContainer/MarginContainer/VBoxContainer/CurrentProgress" index="0"]
+text = "Current Render Progress bar"
+
+[node name="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/CurrentProgress" index="2"]
+tooltip_text = "This adds a slight delay to the start of each animated render, but allows for progress of the current render status."
+button_pressed = true
+
+[node name="MaxLogLines" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/MaxLogLines"]
+layout_mode = 2
+text = "Max Log Lines"
+label_settings = SubResource("LabelSettings_05tvr")
+
+[node name="Spacer" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/MaxLogLines"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MaxLinesSpinBox" type="SpinBox" parent="PanelContainer/MarginContainer/VBoxContainer/MaxLogLines"]
+layout_mode = 2
+tooltip_text = "Max amount of lines for the output log on the main screen. Set to -1 to turn off the limit (Not really recommended)."
+min_value = -1.0
+max_value = 5000.0
+value = 1000.0
+script = ExtResource("11_ghaik")
+
+[node name="SettingItem5" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
+visible = false
+layout_mode = 2
+
+[node name="Label" parent="PanelContainer/MarginContainer/VBoxContainer/SettingItem5" index="0"]
+text = "Run on separate thread"
+
+[node name="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/SettingItem5" index="2"]
+tooltip_text = "Setting to on will keep this program from freezing while running renders. On will be slightly slower, but allows for immediate log feedback and killing the rendering process."
+
+[node name="Spacer" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="About" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "About
+"
+
+[node name="Config" type="Node" parent="." node_paths=PackedStringArray("base", "mono", "current_prog_bar", "persist_close_box", "shutdown_finish_box", "thread_box", "current_progress_box", "max_log_lines_box") groups=["Config"]]
+script = ExtResource("11_214hc")
+base = NodePath("..")
+mono = NodePath("../Mono")
+current_prog_bar = NodePath("../VSplitContainer/Panel/VBoxContainer2/VBoxContainer2")
+persist_close_box = NodePath("../PanelContainer/MarginContainer/VBoxContainer/KillWProgram/CheckBox")
+shutdown_finish_box = NodePath("../PanelContainer/MarginContainer/VBoxContainer/Shutdown/CheckBox")
+thread_box = NodePath("../PanelContainer/MarginContainer/VBoxContainer/Threads/CheckBox")
+current_progress_box = NodePath("../PanelContainer/MarginContainer/VBoxContainer/CurrentProgress/CheckBox")
+max_log_lines_box = NodePath("../PanelContainer/MarginContainer/VBoxContainer/MaxLogLines/MaxLinesSpinBox")
+
+[node name="About" parent="." instance=ExtResource("14_r2lfv")]
+visible = false
+
+[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer2/StopProcess" to="Mono" method="_on_stop_process_pressed"]
+[connection signal="timeout" from="VSplitContainer/Panel/HBoxContainer/dots/Timer" to="VSplitContainer/Panel/HBoxContainer/dots" method="_on_timer_timeout"]
+[connection signal="visibility_changed" from="VSplitContainer/Panel/VBoxContainer" to="VSplitContainer/Panel/HBoxContainer/dots" method="_on_main_screen_visibility_changed"]
+[connection signal="text_submitted" from="VSplitContainer/Panel/VBoxContainer/HBoxContainer/InstallLoc" to="." method="_on_install_loc_text_submitted"]
+[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/HBoxContainer/SearchBlendInstall" to="." method="_on_search_blend_install_pressed"]
+[connection signal="pre_sort_children" from="VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer" to="." method="_on_render_item_container_pre_sort_children"]
+[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer/Add" to="." method="_on_add_pressed"]
+[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Folder" to="." method="_on_add_folder_pressed"]
+[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/File" to="." method="_on_add_file_pressed"]
+[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Clear" to="." method="_on_clear_pressed"]
+[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Start" to="Mono" method="_on_start_pressed"]
+[connection signal="pressed" from="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer/ClearLogs" to="Mono" method="_on_clear_logs_pressed"]
+[connection signal="resized" from="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer/VBoxContainer" to="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer" method="_on_output_container_resized"]
+[connection signal="toggled" from="PanelContainer/MarginContainer/VBoxContainer/KillWProgram/CheckBox" to="Config" method="_on_kill_w_program_toggled"]
+[connection signal="toggled" from="PanelContainer/MarginContainer/VBoxContainer/Shutdown/CheckBox" to="Config" method="_on_shutdown_on_finish_toggled"]
+[connection signal="toggled" from="PanelContainer/MarginContainer/VBoxContainer/Threads/CheckBox" to="Config" method="_on_use_thread_toggled"]
+[connection signal="toggled" from="PanelContainer/MarginContainer/VBoxContainer/CurrentProgress/CheckBox" to="Config" method="_on_current_progress_toggled"]
+[connection signal="value_changed" from="PanelContainer/MarginContainer/VBoxContainer/MaxLogLines/MaxLinesSpinBox" to="Config" method="_on_max_lines_spin_box_value_changed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/About" to="." method="_on_about_pressed"]
+
+[editable path="PanelContainer/MarginContainer/VBoxContainer/KillWProgram"]
+[editable path="PanelContainer/MarginContainer/VBoxContainer/Shutdown"]
+[editable path="PanelContainer/MarginContainer/VBoxContainer/Threads"]
+[editable path="PanelContainer/MarginContainer/VBoxContainer/CurrentProgress"]
+[editable path="PanelContainer/MarginContainer/VBoxContainer/SettingItem5"]

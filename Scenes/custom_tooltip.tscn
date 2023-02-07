@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://c37twu5li6jq7"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ukhv0"]
+font_color = Color(1, 0.984314, 0.870588, 1)
+
+[node name="CustomTooltip" type="Label"]
+custom_minimum_size = Vector2(500, 100)
+offset_right = 500.0
+offset_bottom = 100.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+label_settings = SubResource("LabelSettings_ukhv0")
+vertical_alignment = 1
+autowrap_mode = 2

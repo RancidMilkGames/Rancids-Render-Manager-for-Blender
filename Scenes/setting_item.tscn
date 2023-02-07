@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://dpy481akxvajp"]
+
+[ext_resource type="Script" path="res://Scripts/tool_tip_override.gd" id="1_yfsuj"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_p0x7t"]
+font_color = Color(1, 0.984314, 0.870588, 1)
+
+[node name="SettingItem" type="HBoxContainer"]
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Kill Render with Blender Renderer? "
+label_settings = SubResource("LabelSettings_p0x7t")
+
+[node name="Spacer" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CheckBox" type="CheckBox" parent="."]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+script = ExtResource("1_yfsuj")
