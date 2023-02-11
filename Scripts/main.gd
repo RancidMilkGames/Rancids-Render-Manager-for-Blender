@@ -20,7 +20,8 @@ class_name BaseGUI extends ColorRect
 @export var running_panel: Panel
 @export var settings: PopupPanel
 @export var about: PopupPanel
-var running = false
+@export var override_dest: LineEdit
+var dir_override_search = false
 
 
 func _ready():
@@ -30,6 +31,7 @@ func _ready():
 	file_dialog.files_selected.connect(on_files_dropped)
 	file_dialog.dir_selected.connect(on_dir_selected)
 	file_dialog.file_selected.connect(on_install_file_selected)
+	file_dialog.visibility_changed.connect(turn_off_override_search)
 	get_viewport().files_dropped.connect(on_files_dropped)
 	config.load_config()
 	file_dialog.current_dir = OS.get_executable_path()
@@ -43,9 +45,14 @@ func on_files_dropped(files):
 			var item: RenderItem = render_item_scene.instantiate()
 			item.path.text = f
 			render_item_container.add_child(item)
+			item._on_path_line_text_changed(f)
 
 
 func on_dir_selected(dir):
+	if dir_override_search:
+		override_dest.text = dir
+		return
+	
 	var files = []
 	for f in DirAccess.get_files_at(dir):
 		files.append(dir.path_join(f))
@@ -110,3 +117,18 @@ func _on_clear_pressed():
 
 func _on_about_pressed():
 	about.popup_centered()
+
+
+func _on_override_search_pressed():
+	dir_override_search = true
+	set_dir_root()
+	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_DIR
+	file_dialog.popup_centered(Vector2i(700, 500))
+
+
+func turn_off_override_search():
+	if not file_dialog.visible:
+		await get_tree().create_timer(.1).timeout
+		dir_override_search = false
+
+

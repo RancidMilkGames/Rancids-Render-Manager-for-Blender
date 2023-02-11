@@ -41,6 +41,11 @@ func load_config():
 	current_progress = config.get_value("settings", "current_progress")
 	max_log_lines = config.get_value("settings", "max_log_lines")
 	
+	if config.has_section_key("settings", "override_dest"):
+		base.override_dest.text = config.get_value("settings", "override_dest")
+	else:
+		save_config()
+	
 	persist_close_box.set_pressed_no_signal(persist_on_close)
 	shutdown_finish_box.set_pressed_no_signal(shutdown_finish)
 	thread_box.set_pressed_no_signal(separate_thread)
@@ -58,9 +63,11 @@ func save_config():
 	config.set_value("settings", "separate_thread", separate_thread)
 	config.set_value("settings", "current_progress", current_progress)
 	config.set_value("settings", "max_log_lines", max_log_lines)
+	config.set_value("settings", "override_dest", base.override_dest.text)
 
 	mono.UpdateConfig()
 	config.save("user://config.cfg")
+
 
 func _on_kill_w_program_toggled(button_pressed):
 	persist_on_close = button_pressed
@@ -85,3 +92,8 @@ func _on_current_progress_toggled(button_pressed):
 func _on_max_lines_spin_box_value_changed(value):
 	max_log_lines = value
 	save_config()
+
+
+func _on_override_location_text_changed(new_text):
+	if DirAccess.dir_exists_absolute(new_text):
+		save_config()

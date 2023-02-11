@@ -1,6 +1,22 @@
-[gd_scene load_steps=6 format=3 uid="uid://br7mdbs5gojpn"]
+[gd_scene load_steps=10 format=3 uid="uid://br7mdbs5gojpn"]
 
 [ext_resource type="Script" path="res://Scripts/render_item.gd" id="1_gexwk"]
+[ext_resource type="Script" path="res://Scripts/tool_tip_info.gd" id="2_je7lj"]
+[ext_resource type="Script" path="res://Scripts/searching_label.gd" id="3_vfurs"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_omno7"]
+content_margin_left = 10.0
+content_margin_right = 10.0
+bg_color = Color(1, 0.984314, 0.870588, 0.588235)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+shadow_color = Color(0, 0, 0, 0.870588)
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="LabelSettings" id="LabelSettings_ivyjm"]
+font_color = Color(0.32549, 0.470588, 0.654902, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vxkuw"]
 content_margin_left = 10.0
@@ -34,17 +50,43 @@ corner_detail = 5
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l4h1q"]
 
-[node name="RenderItem" type="HBoxContainer" node_paths=PackedStringArray("path", "option_button", "image_num")]
+[node name="RenderItem" type="HBoxContainer" node_paths=PackedStringArray("path", "option_button", "image_num", "searching_panel")]
 script = ExtResource("1_gexwk")
 path = NodePath("PathLine")
 option_button = NodePath("OptionButton")
 image_num = NodePath("SpinBox")
+searching_panel = NodePath("PathLine/PanelContainer")
 
 [node name="PathLine" type="LineEdit" parent="."]
 custom_minimum_size = Vector2(450, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+tooltip_text = "+"
 placeholder_text = "File Path"
+script = ExtResource("2_je7lj")
+
+[node name="PanelContainer" type="PanelContainer" parent="PathLine"]
+visible = false
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_omno7")
+
+[node name="SearchingLabel" type="Label" parent="PathLine/PanelContainer"]
+custom_minimum_size = Vector2(95, 0)
+layout_mode = 2
+text = "Reading"
+label_settings = SubResource("LabelSettings_ivyjm")
+vertical_alignment = 1
+script = ExtResource("3_vfurs")
+
+[node name="Timer" type="Timer" parent="PathLine/PanelContainer/SearchingLabel"]
+wait_time = 0.5
+autostart = true
 
 [node name="OptionButton" type="OptionButton" parent="."]
 layout_mode = 2
@@ -58,6 +100,9 @@ popup/item_1/id = 1
 [node name="SpinBox" type="SpinBox" parent="."]
 visible = false
 layout_mode = 2
+tooltip_text = "Frame number to render. -1 Will render the current frame of the Blender image."
+min_value = -1.0
+value = -1.0
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 2
@@ -73,5 +118,8 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_blf1k")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_l4h1q")
 text = "X"
 
+[connection signal="text_changed" from="PathLine" to="." method="_on_path_line_text_changed"]
+[connection signal="visibility_changed" from="PathLine/PanelContainer" to="PathLine/PanelContainer/SearchingLabel" method="_on_panel_container_visibility_changed"]
+[connection signal="timeout" from="PathLine/PanelContainer/SearchingLabel/Timer" to="PathLine/PanelContainer/SearchingLabel" method="_on_timer_timeout"]
 [connection signal="item_selected" from="OptionButton" to="." method="_on_option_button_item_selected"]
 [connection signal="pressed" from="Close" to="." method="_on_close_pressed"]

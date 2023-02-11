@@ -4,9 +4,12 @@
 font_color = Color(1, 0.984314, 0.870588, 1)
 
 [node name="CustomTooltip" type="Label"]
-custom_minimum_size = Vector2(500, 100)
-offset_right = 500.0
-offset_bottom = 100.0
+custom_minimum_size = Vector2(500, 50)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 label_settings = SubResource("LabelSettings_ukhv0")

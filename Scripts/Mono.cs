@@ -28,6 +28,7 @@ public partial class Mono : Node
 	[Export] public ProgressBar ProgressBar;
 	[Export] public ProgressBar CurrentProgressBar;
 	[Export] public Label RunningLabel;
+	[Export] public LineEdit OverridePathLineEdit;
 	
 	public bool UseThreads = true;
 	public bool betterProgress = true;
@@ -45,6 +46,8 @@ public partial class Mono : Node
 	public int EndFrame = 0;
 	private int _currentFrame = 0;
 	private int MaxLogLines = 1000;
+	private DirAccess _dirAccess = DirAccess.Open("res://");
+	private Array<string> _paths = new Array<string>();
 
 	public int CurrentFrame
 	{
@@ -128,59 +131,53 @@ public partial class Mono : Node
 			
 			if (child is Control control)
 			{
+				var outOverride = "";
+				
 				if (control.GetChildCount() > 0 && control.GetChild(0) is LineEdit lineEdit && lineEdit.Text.EndsWith(".blend") && FileAccess.FileExists(lineEdit.Text))
 				{
+					if (OverridePathLineEdit.Text != "" && _dirAccess.DirExists(OverridePathLineEdit.Text))
+					{
+						outOverride = " " + "-o" + " " + OverridePathLineEdit.Text; /*.Split("/")[^1]*//* + " "*/
+						if (!outOverride.EndsWith("/")) outOverride += "//";
+						outOverride += lineEdit.Text.Split("/")[^1].Replace(".blend", "") + "/";
+					}
+					else if (!_dirAccess.DirExists(OverridePathLineEdit.Text))
+					{
+						OS.Alert("The output path you have entered is not valid. Please enter a valid path or no path to use the file(s)'s output destination.", "Error");
+						break;
+					}
 					var fVAnim = "";
+					RunningLabel.Text = "Getting file info";
+					SetRunningProp(true);
 					switch ((control.GetNode("OptionButton") as OptionButton).Text)
 					{
 						case "Image":
-							fVAnim = "-f " + (control.GetNode("SpinBox") as SpinBox).Value;
+							var frameToRender = (control.GetNode("SpinBox") as SpinBox).Value;
+							if (betterProgress && (control.GetNode("SpinBox") as SpinBox).Value == -1)
+							{
+								while (control.Get("frame_current").AsInt32() == -111)
+								{
+									Thread.Sleep(500);
+								}
+								
+								frameToRender = control.Get("frame_current").AsInt32();
+								
+							}
+							fVAnim = "-f " + frameToRender;
 							break;
 						case "Animation":
 
 							if (betterProgress)
 							{
-								RunningLabel.Text = "Getting file info";
-								_process.StartInfo.Arguments =
-									"-b" + " " + lineEdit.Text + " " + "--python-expr" + " " + scriptPath;
-								SetRunningProp(true);
-								_process.StartInfo.UseShellExecute = false;
-								_process.StartInfo.CreateNoWindow = true;
-								_process.StartInfo.WorkingDirectory = path;
-								_process.StartInfo.RedirectStandardOutput = true;
-								_process.StartInfo.FileName = _blenderInstallPath.Text; //"blender.exe";
-								_process.Start();
-								StartFrame = 0;
-								while (_process.StandardOutput.EndOfStream == false)
+								while (control.Get("frame_start").AsInt32() == -111)
 								{
-									_output = _process.StandardOutput.ReadLine();
-									
-									if (_output.Contains("frame start"))
-									{
-										var sf = ""; 
-										for (int i = 0; i < _output.Length; i++)
-										{
-											if (int.TryParse(_output[i].ToString(), out _))
-												sf += _output[i].ToString();
-										}
-										StartFrame = int.Parse(sf);
-									}
-									else if (_output.Contains("frame end"))
-									{
-										var ef = ""; //_output[_output.Length - 1].ToString();
-										for (int i = 0; i < _output.Length; i++)
-										{
-											if (int.TryParse(_output[i].ToString(), out _))
-												ef += _output[i].ToString();
-										}
-										EndFrame = int.Parse(ef);
-										_animFrames = EndFrame - StartFrame;
-										break;
-								 	}
+									Thread.Sleep(500);
 								}
+								
+								StartFrame = control.Get("frame_start").AsInt32();
+								EndFrame = control.Get("frame_end").AsInt32();
 							}
-							
-							
+
 							fVAnim = "-a";
 							break;
 						default:
@@ -189,7 +186,7 @@ public partial class Mono : Node
 					}
 
 					
-					Render(lineEdit.Text, fVAnim);
+					Render(lineEdit.Text, outOverride, fVAnim);
 					count++;
 					
 					ProgressBar.Value = count / (_renderItemContainer.GetChildCount() - 1) * 100;
@@ -209,7 +206,7 @@ public partial class Mono : Node
 		_stopPressed = false;
 	}
 	
-	private void Render(string blendPath, string fVAnim)
+	private void Render(string blendPath, string outOverride, string fVAnim)
 	{
 		RunningLabel.Text = "Rendering";
 		_process.StartInfo.UseShellExecute = false;
@@ -217,7 +214,7 @@ public partial class Mono : Node
 		_process.StartInfo.WorkingDirectory = path;
 		_process.StartInfo.RedirectStandardOutput = true;
 		_process.StartInfo.FileName = _blenderInstallPath.Text; //"blender.exe";
-		_process.StartInfo.Arguments = "-b" + " " + blendPath + " " + "--python-expr" + " " + scriptPath + " " + fVAnim;
+		_process.StartInfo.Arguments = "-b" + " " + blendPath + " " + "--python-expr" + " " + scriptPath + outOverride + " " + fVAnim;
 		SetRunningProp(true);
 		_process.Start();
 
@@ -294,5 +291,71 @@ public partial class Mono : Node
 			if (child != _currentOutputItem) child.QueueFree();
 		}
 	}
-	
+
+	public async void FileAdded(string path, string nodeName)
+	{
+		_paths.Add(path + "&" + nodeName);
+		var newThread = new Thread(GetInfo);
+		//await ToSignal(GetTree().CreateTimer(_paths.Count), "timeout");
+		newThread.Start();
+	}
+
+	public void GetInfo()
+	{
+		var pathNName = _paths[0];
+		_paths.RemoveAt(0);
+		var _newProcess = new Process();
+		//RunningLabel.Text = "Getting file info";
+		_newProcess.StartInfo.Arguments =
+			"-b" + " " + pathNName.Split("&")[0] + " " + "--python-expr" + " " + scriptPath;
+		//SetRunningProp(true);
+		_newProcess.StartInfo.UseShellExecute = false;
+		_newProcess.StartInfo.CreateNoWindow = true;
+		_newProcess.StartInfo.WorkingDirectory = path;
+		_newProcess.StartInfo.RedirectStandardOutput = true;
+		_newProcess.StartInfo.FileName = _blenderInstallPath.Text; //"blender.exe";
+		_newProcess.Start();
+		
+		while (_newProcess.StandardOutput.EndOfStream == false)
+		{
+			var infoOutput = _newProcess.StandardOutput.ReadLine();
+			var child = _renderItemContainer.GetNode(pathNName.Split("&")[1]) as Control;
+									
+			if (infoOutput.Contains("frame current"))
+			{
+				var cf = ""; 
+				for (int i = 0; i < infoOutput.Length; i++)
+				{
+					if (int.TryParse(infoOutput[i].ToString(), out _))
+						cf += infoOutput[i].ToString();
+				}
+				child.Set("frame_current", int.Parse(cf));
+				//break;
+			}
+			else if (infoOutput.Contains("frame start"))
+			{
+				var sf = ""; 
+				for (int i = 0; i < infoOutput.Length; i++)
+				{
+					if (int.TryParse(infoOutput[i].ToString(), out _))
+						sf += infoOutput[i].ToString();
+				}
+				child.Set("frame_start", int.Parse(sf));
+			}
+			if (infoOutput.Contains("frame end"))
+			{
+				var ef = ""; //_output[_output.Length - 1].ToString();
+				for (int i = 0; i < infoOutput.Length; i++)
+				{
+					if (int.TryParse(infoOutput[i].ToString(), out _))
+						ef += infoOutput[i].ToString();
+				}
+				child.Set("frame_end", int.Parse(ef));
+				break;
+			}
+			Thread.Sleep(100);
+			
+		}
+		//GD.Print(_output);
+	}
 }

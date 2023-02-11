@@ -1,4 +1,3 @@
-"
 # This file is part of Rancid's Render Manager.
 
 # Rancid's Render Manager is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -8,10 +7,18 @@
 # You should have received a copy of the GNU General Public License along with Rancid's Render Manager. If not, see <https://www.gnu.org/licenses/>. 
 
 
-import bpy
+extends Control
 
-print('frame current', bpy.context.scene.frame_current)
-print('frame start', bpy.context.scene.frame_start)
-print('frame end', bpy.context.scene.frame_end)
 
-"
+func _make_custom_tooltip(for_text):
+	var label = load("res://Scenes/custom_tooltip.tscn").instantiate()
+	if get_theme_color("font_color").is_equal_approx(get_parent().good_sel):
+		label.text = "Start Frame: " + str(get_parent().frame_start) + "\n"
+		label.text += "Current Frame: " + str(get_parent().frame_current) + "\n"
+		label.text += "End Frame: " + str(get_parent().frame_end)
+	elif get_theme_color("font_color").is_equal_approx(get_parent().searching_sel):
+		label.text = "Getting .blend file info."
+	else:
+		label.text = "Blender file is invalid or issue getting file info"
+	
+	return label

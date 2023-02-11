@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://cwq8y4uu6p174"]
+[gd_scene load_steps=32 format=3 uid="uid://cwq8y4uu6p174"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_2ipsj"]
 [ext_resource type="FontFile" uid="uid://bb1ue8in033ye" path="res://Fonts/Montserrat_Alternates/MontserratAlternates-Medium.ttf" id="1_yl0ri"]
@@ -95,6 +95,13 @@ corner_radius_bottom_left = 5
 font_size = 72
 font_color = Color(0.690196, 0.819608, 0.545098, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dgni0"]
+bg_color = Color(0.552941, 0.482353, 0.501961, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i3o85"]
 content_margin_left = 5.0
 content_margin_right = 5.0
@@ -171,7 +178,7 @@ corner_radius_bottom_left = 5
 [sub_resource type="LabelSettings" id="LabelSettings_05tvr"]
 font_color = Color(1, 0.984314, 0.870588, 1)
 
-[node name="Base" type="ColorRect" node_paths=PackedStringArray("config", "render_item_container", "add_item_button", "install_loc_line", "running_panel", "settings", "about")]
+[node name="Base" type="ColorRect" node_paths=PackedStringArray("config", "render_item_container", "add_item_button", "install_loc_line", "running_panel", "settings", "about", "override_dest")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -188,6 +195,7 @@ install_loc_line = NodePath("VSplitContainer/Panel/VBoxContainer/HBoxContainer/I
 running_panel = NodePath("VSplitContainer/Panel")
 settings = NodePath("PanelContainer")
 about = NodePath("About")
+override_dest = NodePath("VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer/OverrideLocation")
 
 [node name="VSplitContainer" type="VSplitContainer" parent="."]
 custom_minimum_size = Vector2(0, 690)
@@ -365,7 +373,7 @@ expand_icon = true
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 mouse_default_cursor_shape = 2
-text = "Add File"
+text = "Add File(s)"
 icon = ExtResource("3_2a1ha")
 expand_icon = true
 
@@ -377,7 +385,32 @@ text = "Settings"
 icon = ExtResource("6_wnh0w")
 expand_icon = true
 
+[node name="Override" type="PanelContainer" parent="VSplitContainer/Panel/VBoxContainer/Add"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_dgni0")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/Panel/VBoxContainer/Add/Override"]
+layout_mode = 2
+
+[node name="OverrideLocation" type="LineEdit" parent="VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Override the render output's destination? Leaving this blank will make the files render to the location specified in the Blender file."
+theme_override_colors/font_color = Color(1, 0.984314, 0.870588, 1)
+theme_override_colors/font_selected_color = Color(0, 0, 0, 1)
+theme_override_colors/font_placeholder_color = Color(0.858824, 0.839216, 0.792157, 1)
+placeholder_text = "Optional Override Destination"
+
+[node name="Override Search" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+icon = ExtResource("3_4c6h0")
+expand_icon = true
+
 [node name="Spacer" type="Control" parent="VSplitContainer/Panel/VBoxContainer/Add"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -452,9 +485,19 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 alignment = 1
 
-[node name="Mono" type="Node" parent="."]
+[node name="Mono" type="Node" parent="." node_paths=PackedStringArray("_blenderInstallPath", "_renderItemContainer", "_runningPanel", "_mainPanel", "_outputItemContainer", "Config", "ProgressBar", "CurrentProgressBar", "RunningLabel", "OverridePathLineEdit") groups=["Mono"]]
 script = ExtResource("6_2rmq8")
+_blenderInstallPath = NodePath("../VSplitContainer/Panel/VBoxContainer/HBoxContainer/InstallLoc")
+_renderItemContainer = NodePath("../VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer")
+_runningPanel = NodePath("../VSplitContainer/Panel")
+_mainPanel = NodePath("../VSplitContainer/Panel/VBoxContainer")
 _outputItemScene = ExtResource("8_m7s6p")
+_outputItemContainer = NodePath("../VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer/VBoxContainer")
+Config = NodePath("../Config")
+ProgressBar = NodePath("../VSplitContainer/Panel/VBoxContainer2/VBoxContainer/TotalProgressBar")
+CurrentProgressBar = NodePath("../VSplitContainer/Panel/VBoxContainer2/VBoxContainer2/CurrentProgressBar")
+RunningLabel = NodePath("../VSplitContainer/Panel/HBoxContainer/Label")
+OverridePathLineEdit = NodePath("../VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer/OverrideLocation")
 
 [node name="PanelContainer" type="PopupPanel" parent="."]
 initial_position = 1
@@ -571,6 +614,8 @@ visible = false
 [connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Folder" to="." method="_on_add_folder_pressed"]
 [connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/File" to="." method="_on_add_file_pressed"]
 [connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Settings" to="." method="_on_settings_pressed"]
+[connection signal="text_changed" from="VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer/OverrideLocation" to="Config" method="_on_override_location_text_changed"]
+[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer/Override Search" to="." method="_on_override_search_pressed"]
 [connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Clear" to="." method="_on_clear_pressed"]
 [connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Start" to="Mono" method="_on_start_pressed"]
 [connection signal="pressed" from="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer/ClearLogs" to="Mono" method="_on_clear_logs_pressed"]
