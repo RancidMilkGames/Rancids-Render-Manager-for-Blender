@@ -50,12 +50,15 @@ corner_detail = 5
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l4h1q"]
 
-[node name="RenderItem" type="HBoxContainer" node_paths=PackedStringArray("path", "option_button", "image_num", "searching_panel")]
+[node name="RenderItem" type="HBoxContainer" node_paths=PackedStringArray("path", "option_button", "image_num", "searching_panel", "img_override", "anim_override", "search_label")]
 script = ExtResource("1_gexwk")
 path = NodePath("PathLine")
 option_button = NodePath("OptionButton")
 image_num = NodePath("SpinBox")
 searching_panel = NodePath("PathLine/PanelContainer")
+img_override = NodePath("ImageOverride")
+anim_override = NodePath("AnimOverride")
+search_label = NodePath("PathLine/PanelContainer/SearchingLabel")
 
 [node name="PathLine" type="LineEdit" parent="."]
 custom_minimum_size = Vector2(450, 0)
@@ -72,6 +75,8 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -115.0
+offset_right = 5.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_omno7")
@@ -103,6 +108,47 @@ layout_mode = 2
 tooltip_text = "Frame number to render. -1 Will render the current frame of the Blender image."
 min_value = -1.0
 value = -1.0
+
+[node name="ImageOverride" type="OptionButton" parent="."]
+visible = false
+layout_mode = 2
+tooltip_text = "Image format override."
+item_count = 7
+selected = 0
+popup/item_0/text = "NA"
+popup/item_0/id = 1
+popup/item_1/text = "TGA"
+popup/item_1/id = 0
+popup/item_2/text = "RAWTGA"
+popup/item_2/id = 2
+popup/item_3/text = "JPEG"
+popup/item_3/id = 3
+popup/item_4/text = "PNG"
+popup/item_4/id = 4
+popup/item_5/text = "BMP"
+popup/item_5/id = 5
+popup/item_6/text = "*TIFF"
+popup/item_6/id = 6
+
+[node name="AnimOverride" type="OptionButton" parent="."]
+layout_mode = 2
+tooltip_text = "Animation format override."
+item_count = 7
+selected = 0
+popup/item_0/text = "NA"
+popup/item_0/id = 0
+popup/item_1/text = "AVIRAW"
+popup/item_1/id = 1
+popup/item_2/text = "AVIJPEG"
+popup/item_2/id = 2
+popup/item_3/text = "MP4"
+popup/item_3/id = 3
+popup/item_4/text = "MKV"
+popup/item_4/id = 4
+popup/item_5/text = "FFMPEG"
+popup/item_5/id = 6
+popup/item_6/text = "*MPEG"
+popup/item_6/id = 5
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 2

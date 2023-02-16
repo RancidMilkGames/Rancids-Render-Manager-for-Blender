@@ -11,6 +11,7 @@ extends Label
 
 var lerp_to
 var dot_count = 0
+var locked = ""
 
 func _ready():
 	lerp_to = Color("5378a7")
@@ -40,4 +41,4 @@ func _on_timer_timeout():
 	dot_count += 1
 	if dot_count >= 4:
 		dot_count = 0
-	text = t + ".".repeat(dot_count)
+	text = t + ".".repeat(dot_count) + " ".repeat(3 - dot_count) + locked

@@ -13,6 +13,9 @@ class_name RenderItem extends HBoxContainer
 @export var option_button: OptionButton
 @export var image_num: SpinBox
 @export var searching_panel: Control
+@export var img_override: OptionButton
+@export var anim_override: OptionButton
+@export var search_label: Label
 
 var bad_sel = "bd516d"
 var searching_sel = "fffbde"
@@ -26,23 +29,44 @@ var frame_current = -111:
 		if fc != -111:
 			path.add_theme_color_override("font_color", Color.from_string(good_sel, Color.WHITE))
 			searching_panel.visible = false
+			
+var locked = false:
+	set(l):
+		locked = l
+		if locked:
+			search_label.locked = "L"
+		else:
+			search_label.locked = ""
+			get_tree().get_first_node_in_group("Mono").FileAdded()
+			
+func _ready():
+	img_override.visible = false
+	anim_override.visible = true
 
 func _on_option_button_item_selected(index):
 	if index == 1:
 		image_num.visible = true
+		img_override.visible = true
+		anim_override.visible = false
 	else:
 		image_num.visible = false
+		img_override.visible = false
+		anim_override.visible = true
 
 
 func _on_close_pressed():
-	queue_free()
+	if locked:
+		get_tree().get_first_node_in_group("Base").notify("File is being read. 
+		Please wait for it to finish loading before removing it from the queue.")
+	else:
+		queue_free()
 
 
 func _on_path_line_text_changed(new_text):
 	if new_text.ends_with(".blend") and FileAccess.file_exists(new_text):
 		path.add_theme_color_override("font_color", Color.from_string(searching_sel, Color.WHITE))
 		searching_panel.visible = true
-		get_tree().get_first_node_in_group("Mono").FileAdded(path.text, name)
+		get_tree().get_first_node_in_group("Mono").FileAdded() # (path.text, name)
 	else:
 		frame_current = -111
 		frame_end = -111

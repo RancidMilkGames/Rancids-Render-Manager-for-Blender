@@ -21,6 +21,7 @@ class_name BaseGUI extends ColorRect
 @export var settings: PopupPanel
 @export var about: PopupPanel
 @export var override_dest: LineEdit
+@export var notify_popup: PopupPanel
 var dir_override_search = false
 
 
@@ -88,7 +89,7 @@ func _on_add_pressed():
 
 
 func _on_render_item_container_pre_sort_children():
-	render_item_container.move_child(add_item_button, -1)
+	render_item_container.call_deferred("move_child", add_item_button, -1) #move_child(add_item_button, -1)
 
 
 func _on_search_blend_install_pressed():
@@ -132,3 +133,6 @@ func turn_off_override_search():
 		dir_override_search = false
 
 
+func notify(mes):
+	notify_popup.message_label.text = mes
+	notify_popup.popup_centered()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://cwq8y4uu6p174"]
+[gd_scene load_steps=34 format=3 uid="uid://cwq8y4uu6p174"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_2ipsj"]
 [ext_resource type="FontFile" uid="uid://bb1ue8in033ye" path="res://Fonts/Montserrat_Alternates/MontserratAlternates-Medium.ttf" id="1_yl0ri"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://Scripts/config.gd" id="11_214hc"]
 [ext_resource type="Script" path="res://Scripts/tool_tip_override.gd" id="11_ghaik"]
 [ext_resource type="PackedScene" uid="uid://bkk7ags3cnpef" path="res://Scenes/About.tscn" id="14_r2lfv"]
+[ext_resource type="Script" path="res://Scripts/notify.gd" id="16_j73dx"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nv76d"]
 content_margin_left = 0.0
@@ -178,7 +179,10 @@ corner_radius_bottom_left = 5
 [sub_resource type="LabelSettings" id="LabelSettings_05tvr"]
 font_color = Color(1, 0.984314, 0.870588, 1)
 
-[node name="Base" type="ColorRect" node_paths=PackedStringArray("config", "render_item_container", "add_item_button", "install_loc_line", "running_panel", "settings", "about", "override_dest")]
+[sub_resource type="LabelSettings" id="LabelSettings_2c4x4"]
+font_color = Color(1, 0.984314, 0.870588, 1)
+
+[node name="Base" type="ColorRect" node_paths=PackedStringArray("config", "render_item_container", "add_item_button", "install_loc_line", "running_panel", "settings", "about", "override_dest", "notify_popup") groups=["Base"]]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -196,6 +200,7 @@ running_panel = NodePath("VSplitContainer/Panel")
 settings = NodePath("PanelContainer")
 about = NodePath("About")
 override_dest = NodePath("VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer/OverrideLocation")
+notify_popup = NodePath("Notify")
 
 [node name="VSplitContainer" type="VSplitContainer" parent="."]
 custom_minimum_size = Vector2(0, 690)
@@ -604,6 +609,43 @@ max_log_lines_box = NodePath("../PanelContainer/MarginContainer/VBoxContainer/Ma
 [node name="About" parent="." instance=ExtResource("14_r2lfv")]
 visible = false
 
+[node name="Notify" type="PopupPanel" parent="." node_paths=PackedStringArray("message_label")]
+initial_position = 1
+title = "Notification"
+size = Vector2i(164, 163)
+script = ExtResource("16_j73dx")
+message_label = NodePath("VBoxContainer/MessageContainer/Label")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Notify"]
+custom_minimum_size = Vector2(500, 0)
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 504.0
+offset_bottom = 159.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Notify/VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="Close" type="Button" parent="Notify/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "X"
+flat = true
+
+[node name="MessageContainer" type="MarginContainer" parent="Notify/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="Label" type="Label" parent="Notify/VBoxContainer/MessageContainer"]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_2c4x4")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
 [connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer2/StopProcess" to="Mono" method="_on_stop_process_pressed"]
 [connection signal="timeout" from="VSplitContainer/Panel/HBoxContainer/dots/Timer" to="VSplitContainer/Panel/HBoxContainer/dots" method="_on_timer_timeout"]
 [connection signal="visibility_changed" from="VSplitContainer/Panel/VBoxContainer" to="VSplitContainer/Panel/HBoxContainer/dots" method="_on_main_screen_visibility_changed"]
@@ -626,6 +668,7 @@ visible = false
 [connection signal="toggled" from="PanelContainer/MarginContainer/VBoxContainer/CurrentProgress/CheckBox" to="Config" method="_on_current_progress_toggled"]
 [connection signal="value_changed" from="PanelContainer/MarginContainer/VBoxContainer/MaxLogLines/MaxLinesSpinBox" to="Config" method="_on_max_lines_spin_box_value_changed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/About" to="." method="_on_about_pressed"]
+[connection signal="pressed" from="Notify/VBoxContainer/HBoxContainer/Close" to="Notify" method="_on_close_pressed"]
 
 [editable path="PanelContainer/MarginContainer/VBoxContainer/KillWProgram"]
 [editable path="PanelContainer/MarginContainer/VBoxContainer/Shutdown"]
