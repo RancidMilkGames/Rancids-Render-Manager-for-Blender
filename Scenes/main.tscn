@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://cwq8y4uu6p174"]
+[gd_scene load_steps=35 format=3 uid="uid://cwq8y4uu6p174"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_2ipsj"]
 [ext_resource type="FontFile" uid="uid://bb1ue8in033ye" path="res://Fonts/Montserrat_Alternates/MontserratAlternates-Medium.ttf" id="1_yl0ri"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://d3anbxnd65383" path="res://Images/File Open.png" id="3_2a1ha"]
 [ext_resource type="Texture2D" uid="uid://bmmchxvls46j" path="res://Images/Search Icon.png" id="3_4c6h0"]
 [ext_resource type="Script" path="res://Scripts/running_dots.gd" id="4_cgtpe"]
+[ext_resource type="Script" path="res://Scripts/progress_window.gd" id="4_xes1m"]
 [ext_resource type="Script" path="res://Scripts/Mono.cs" id="6_2rmq8"]
 [ext_resource type="Texture2D" uid="uid://cqtu7y7e0ccrr" path="res://Images/Setting Gear Icon.png" id="6_wnh0w"]
 [ext_resource type="PackedScene" uid="uid://dpy481akxvajp" path="res://Scenes/setting_item.tscn" id="7_2fkv1"]
@@ -71,10 +72,9 @@ ProgressBar/colors/font_color = Color(0.156863, 0.141176, 0.180392, 1)
 ProgressBar/styles/background = SubResource("StyleBoxFlat_78385")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_k1lfc")
 
-[sub_resource type="Theme" id="Theme_tfpa4"]
-Label/colors/font_color = Color(1, 0.984314, 0.870588, 1)
-Label/colors/font_outline_color = Color(0.435294, 0.615686, 0.505882, 1)
-Label/constants/outline_size = 2
+[sub_resource type="LabelSettings" id="LabelSettings_uycae"]
+font_size = 72
+font_color = Color(0.690196, 0.819608, 0.545098, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tdew8"]
 content_margin_left = 25.0
@@ -92,9 +92,23 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="LabelSettings" id="LabelSettings_uycae"]
-font_size = 72
-font_color = Color(0.690196, 0.819608, 0.545098, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8vuy0"]
+bg_color = Color(0.552941, 0.482353, 0.501961, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_05tvr"]
+font_color = Color(1, 0.984314, 0.870588, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_2c4x4"]
+font_color = Color(1, 0.984314, 0.870588, 1)
+
+[sub_resource type="Theme" id="Theme_tfpa4"]
+Label/colors/font_color = Color(1, 0.984314, 0.870588, 1)
+Label/colors/font_outline_color = Color(0.435294, 0.615686, 0.505882, 1)
+Label/constants/outline_size = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dgni0"]
 bg_color = Color(0.552941, 0.482353, 0.501961, 1)
@@ -169,19 +183,6 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 5
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8vuy0"]
-bg_color = Color(0.552941, 0.482353, 0.501961, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="LabelSettings" id="LabelSettings_05tvr"]
-font_color = Color(1, 0.984314, 0.870588, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_2c4x4"]
-font_color = Color(1, 0.984314, 0.870588, 1)
-
 [node name="Base" type="ColorRect" node_paths=PackedStringArray("config", "render_item_container", "add_item_button", "install_loc_line", "running_panel", "settings", "about", "override_dest", "notify_popup") groups=["Base"]]
 anchors_preset = 15
 anchor_right = 1.0
@@ -193,78 +194,84 @@ color = Color(0.32549, 0.231373, 0.262745, 1)
 script = ExtResource("1_2ipsj")
 config = NodePath("Config")
 render_item_scene = ExtResource("2_l6wa3")
-render_item_container = NodePath("VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer")
-add_item_button = NodePath("VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer/Add")
-install_loc_line = NodePath("VSplitContainer/Panel/VBoxContainer/HBoxContainer/InstallLoc")
-running_panel = NodePath("VSplitContainer/Panel")
-settings = NodePath("PanelContainer")
+render_item_container = NodePath("TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer")
+add_item_button = NodePath("TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer/Add")
+install_loc_line = NodePath("TabContainer/Main/Panel/VBoxContainer/HBoxContainer/InstallLoc")
+running_panel = NodePath("TabContainer/Main/Panel")
+settings = NodePath("Settings")
 about = NodePath("About")
-override_dest = NodePath("VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer/OverrideLocation")
+override_dest = NodePath("TabContainer/Main/Panel/VBoxContainer/Add/Override/HBoxContainer/OverrideLocation")
 notify_popup = NodePath("Notify")
 
-[node name="VSplitContainer" type="VSplitContainer" parent="."]
-custom_minimum_size = Vector2(0, 690)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -620.0
-offset_top = -345.0
-offset_right = 620.0
-offset_bottom = 345.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="ProgressWindow" type="Window" parent="." node_paths=PackedStringArray("progress_control", "tab_cont") groups=["Progress"]]
+initial_position = 2
+title = "Progress"
+size = Vector2i(600, 400)
+visible = false
+transient = true
+min_size = Vector2i(600, 400)
+script = ExtResource("4_xes1m")
+progress_control = NodePath("Progress")
+tab_cont = NodePath("../TabContainer")
 
-[node name="Panel" type="Panel" parent="VSplitContainer"]
-custom_minimum_size = Vector2(800, 400)
-layout_mode = 2
-size_flags_vertical = 3
-theme = SubResource("Theme_tfpa4")
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="VSplitContainer/Panel"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = 46.0
-offset_right = 250.0
-offset_bottom = 104.0
+[node name="Progress" type="VBoxContainer" parent="ProgressWindow"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="VSplitContainer/Panel/VBoxContainer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ProgressWindow/Progress"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="ProgressWindow/Progress/HBoxContainer"]
+layout_mode = 2
+text = "Running"
+label_settings = SubResource("LabelSettings_uycae")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="dots" type="Label" parent="ProgressWindow/Progress/HBoxContainer" node_paths=PackedStringArray("main_screen", "timer")]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+text = "."
+label_settings = SubResource("LabelSettings_uycae")
+vertical_alignment = 1
+script = ExtResource("4_cgtpe")
+main_screen = NodePath("../..")
+timer = NodePath("Timer")
+
+[node name="Timer" type="Timer" parent="ProgressWindow/Progress/HBoxContainer/dots"]
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="ProgressWindow/Progress"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VSplitContainer/Panel/VBoxContainer2/VBoxContainer2"]
+[node name="Label" type="Label" parent="ProgressWindow/Progress/VBoxContainer2"]
 layout_mode = 2
 text = "Current Progress:"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CurrentProgressBar" type="ProgressBar" parent="VSplitContainer/Panel/VBoxContainer2/VBoxContainer2"]
+[node name="CurrentProgressBar" type="ProgressBar" parent="ProgressWindow/Progress/VBoxContainer2"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/Panel/VBoxContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ProgressWindow/Progress/VBoxContainer2"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VSplitContainer/Panel/VBoxContainer2/VBoxContainer"]
+[node name="Label" type="Label" parent="ProgressWindow/Progress/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
 text = "Total Progress"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TotalProgressBar" type="ProgressBar" parent="VSplitContainer/Panel/VBoxContainer2/VBoxContainer"]
-custom_minimum_size = Vector2(500, 0)
+[node name="TotalProgressBar" type="ProgressBar" parent="ProgressWindow/Progress/VBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 
-[node name="StopProcess" type="Button" parent="VSplitContainer/Panel/VBoxContainer2"]
+[node name="StopProcess" type="Button" parent="ProgressWindow/Progress"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -273,301 +280,85 @@ theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_tdew8")
 text = "Stop"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/Panel"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -109.0
-offset_right = 20.0
-offset_bottom = -69.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Label" type="Label" parent="VSplitContainer/Panel/HBoxContainer"]
-layout_mode = 2
-text = "Running"
-label_settings = SubResource("LabelSettings_uycae")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="dots" type="Label" parent="VSplitContainer/Panel/HBoxContainer" node_paths=PackedStringArray("main_screen", "timer")]
-custom_minimum_size = Vector2(48, 0)
-layout_mode = 2
-text = "."
-label_settings = SubResource("LabelSettings_uycae")
-vertical_alignment = 1
-script = ExtResource("4_cgtpe")
-main_screen = NodePath("../../VBoxContainer")
-timer = NodePath("Timer")
-
-[node name="Timer" type="Timer" parent="VSplitContainer/Panel/HBoxContainer/dots"]
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_vertical = 3
-alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/Panel/VBoxContainer"]
-layout_mode = 2
-
-[node name="InstallLoc" type="LineEdit" parent="VSplitContainer/Panel/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 0.984314, 0.870588, 1)
-theme_override_colors/font_placeholder_color = Color(0.741176, 0.317647, 0.427451, 1)
-placeholder_text = "Blender Executable path - Must set before rendering"
-caret_blink = true
-caret_blink_interval = 0.5
-
-[node name="SearchBlendInstall" type="Button" parent="VSplitContainer/Panel/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(32, 0)
-layout_mode = 2
-mouse_default_cursor_shape = 2
-icon = ExtResource("3_4c6h0")
-expand_icon = true
-
-[node name="EndSpacer" type="Control" parent="VSplitContainer/Panel/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(4, 0)
-layout_mode = 2
-
-[node name="ScrollContainer" type="ScrollContainer" parent="VSplitContainer/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 300)
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="PanelContainer" type="PanelContainer" parent="VSplitContainer/Panel/VBoxContainer/ScrollContainer"]
-custom_minimum_size = Vector2(1225, 300)
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer"]
-layout_mode = 2
-
-[node name="RenderItemContainer" type="VBoxContainer" parent="VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer"]
-layout_mode = 2
-
-[node name="Add" type="Button" parent="VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_default_cursor_shape = 2
-theme_override_font_sizes/font_size = 16
-text = "+ Add "
-
-[node name="Add" type="HBoxContainer" parent="VSplitContainer/Panel/VBoxContainer"]
-layout_mode = 2
-
-[node name="Folder" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add"]
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "Add Folder"
-icon = ExtResource("2_5e67o")
-expand_icon = true
-
-[node name="File" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add"]
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "Add File(s)"
-icon = ExtResource("3_2a1ha")
-expand_icon = true
-
-[node name="Settings" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add"]
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "Settings"
-icon = ExtResource("6_wnh0w")
-expand_icon = true
-
-[node name="Override" type="PanelContainer" parent="VSplitContainer/Panel/VBoxContainer/Add"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_dgni0")
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/Panel/VBoxContainer/Add/Override"]
-layout_mode = 2
-
-[node name="OverrideLocation" type="LineEdit" parent="VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer"]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Override the render output's destination? Leaving this blank will make the files render to the location specified in the Blender file."
-theme_override_colors/font_color = Color(1, 0.984314, 0.870588, 1)
-theme_override_colors/font_selected_color = Color(0, 0, 0, 1)
-theme_override_colors/font_placeholder_color = Color(0.858824, 0.839216, 0.792157, 1)
-placeholder_text = "Optional Override Destination"
-
-[node name="Override Search" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer"]
-custom_minimum_size = Vector2(32, 0)
-layout_mode = 2
-icon = ExtResource("3_4c6h0")
-expand_icon = true
-
-[node name="Spacer" type="Control" parent="VSplitContainer/Panel/VBoxContainer/Add"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Clear" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0.203922, 0.294118, 0.407843, 1)
-theme_override_colors/font_outline_color = Color(0.156863, 0.141176, 0.180392, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_i3o85")
-text = "Clear"
-
-[node name="Start" type="Button" parent="VSplitContainer/Panel/VBoxContainer/Add"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0.203922, 0.294118, 0.407843, 1)
-theme_override_colors/font_outline_color = Color(0.156863, 0.141176, 0.180392, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_uix7d")
-text = "Start"
-
-[node name="EndSpacer" type="Control" parent="VSplitContainer/Panel/VBoxContainer/Add"]
-custom_minimum_size = Vector2(4, 0)
-layout_mode = 2
-
-[node name="PanelContainer" type="PanelContainer" parent="VSplitContainer"]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer/PanelContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/PanelContainer/MarginContainer"]
-custom_minimum_size = Vector2(0, 100)
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Panel" type="PanelContainer" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_w3rkw")
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Output:"
-label_settings = SubResource("LabelSettings_se188")
-
-[node name="ClearLogs" type="Button" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
-layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0.156863, 0.141176, 0.180392, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_o7rev")
-text = "Clear Logs"
-
-[node name="Panel2" type="PanelContainer" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 33)
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_cdew4")
-
-[node name="ScrollContainer" type="ScrollContainer" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel2" node_paths=PackedStringArray("output_container")]
-layout_mode = 2
-horizontal_scroll_mode = 0
-script = ExtResource("7_juvtn")
-output_container = NodePath("VBoxContainer")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-alignment = 1
-
-[node name="Mono" type="Node" parent="." node_paths=PackedStringArray("_blenderInstallPath", "_renderItemContainer", "_runningPanel", "_mainPanel", "_outputItemContainer", "Config", "ProgressBar", "CurrentProgressBar", "RunningLabel", "OverridePathLineEdit") groups=["Mono"]]
+[node name="Mono" type="Node" parent="." node_paths=PackedStringArray("_blenderInstallPath", "_renderItemContainer", "_runningPanel", "_mainPanel", "_outputItemContainer", "Config", "ProgressBar", "CurrentProgressBar", "RunningLabel", "OverridePathLineEdit", "ProgressWindow") groups=["Mono"]]
 script = ExtResource("6_2rmq8")
-_blenderInstallPath = NodePath("../VSplitContainer/Panel/VBoxContainer/HBoxContainer/InstallLoc")
-_renderItemContainer = NodePath("../VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer")
-_runningPanel = NodePath("../VSplitContainer/Panel")
-_mainPanel = NodePath("../VSplitContainer/Panel/VBoxContainer")
+_blenderInstallPath = NodePath("../TabContainer/Main/Panel/VBoxContainer/HBoxContainer/InstallLoc")
+_renderItemContainer = NodePath("../TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer")
+_runningPanel = NodePath("../TabContainer/Main/Panel")
+_mainPanel = NodePath("../TabContainer/Main/Panel/VBoxContainer")
 _outputItemScene = ExtResource("8_m7s6p")
-_outputItemContainer = NodePath("../VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer/VBoxContainer")
+_outputItemContainer = NodePath("../TabContainer/Main/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer/VBoxContainer")
 Config = NodePath("../Config")
-ProgressBar = NodePath("../VSplitContainer/Panel/VBoxContainer2/VBoxContainer/TotalProgressBar")
-CurrentProgressBar = NodePath("../VSplitContainer/Panel/VBoxContainer2/VBoxContainer2/CurrentProgressBar")
-RunningLabel = NodePath("../VSplitContainer/Panel/HBoxContainer/Label")
-OverridePathLineEdit = NodePath("../VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer/OverrideLocation")
+ProgressBar = NodePath("../ProgressWindow/Progress/VBoxContainer2/VBoxContainer/TotalProgressBar")
+CurrentProgressBar = NodePath("../ProgressWindow/Progress/VBoxContainer2/CurrentProgressBar")
+RunningLabel = NodePath("../ProgressWindow/Progress/HBoxContainer/Label")
+OverridePathLineEdit = NodePath("../TabContainer/Main/Panel/VBoxContainer/Add/Override/HBoxContainer/OverrideLocation")
+ProgressWindow = NodePath("../ProgressWindow")
 
-[node name="PanelContainer" type="PopupPanel" parent="."]
+[node name="Settings" type="PopupPanel" parent="."]
 initial_position = 1
 title = "Settings"
 size = Vector2i(315, 223)
 theme_override_styles/panel = SubResource("StyleBoxFlat_8vuy0")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="Settings"]
 offset_right = 315.0
 offset_bottom = 223.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Settings/MarginContainer"]
 layout_mode = 2
 
-[node name="KillWProgram" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
+[node name="KillWProgram" parent="Settings/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
 layout_mode = 2
 
-[node name="Label" parent="PanelContainer/MarginContainer/VBoxContainer/KillWProgram" index="0"]
+[node name="Label" parent="Settings/MarginContainer/VBoxContainer/KillWProgram" index="0"]
 text = "Blender persist on close"
 
-[node name="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/KillWProgram" index="2"]
+[node name="CheckBox" parent="Settings/MarginContainer/VBoxContainer/KillWProgram" index="2"]
 tooltip_text = "When on, close the Background Blender process when closing this program. If set to off, Blender will keep rendering even if this program is closed."
 
-[node name="Shutdown" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
+[node name="Shutdown" parent="Settings/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
 layout_mode = 2
 
-[node name="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Shutdown" index="0"]
+[node name="Label" parent="Settings/MarginContainer/VBoxContainer/Shutdown" index="0"]
 text = "Shutdown on Finish"
 
-[node name="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/Shutdown" index="2"]
+[node name="CheckBox" parent="Settings/MarginContainer/VBoxContainer/Shutdown" index="2"]
 tooltip_text = "Will attempt to shutdown the computer when all rendering is done."
 
-[node name="Threads" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
+[node name="Threads" parent="Settings/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
 layout_mode = 2
 
-[node name="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Threads" index="0"]
+[node name="Label" parent="Settings/MarginContainer/VBoxContainer/Threads" index="0"]
 text = "Run on separate thread"
 
-[node name="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/Threads" index="2"]
+[node name="CheckBox" parent="Settings/MarginContainer/VBoxContainer/Threads" index="2"]
 tooltip_text = "Setting to on will keep this program from freezing while running renders. On will be slightly slower, but allows for immediate log feedback and killing the rendering process."
 button_pressed = true
 
-[node name="CurrentProgress" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
+[node name="CurrentProgress" parent="Settings/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
 layout_mode = 2
 
-[node name="Label" parent="PanelContainer/MarginContainer/VBoxContainer/CurrentProgress" index="0"]
+[node name="Label" parent="Settings/MarginContainer/VBoxContainer/CurrentProgress" index="0"]
 text = "Current Render Progress bar"
 
-[node name="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/CurrentProgress" index="2"]
+[node name="CheckBox" parent="Settings/MarginContainer/VBoxContainer/CurrentProgress" index="2"]
 tooltip_text = "This adds a slight delay to the start of each animated render, but allows for progress of the current render status."
 button_pressed = true
 
-[node name="MaxLogLines" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="MaxLogLines" type="HBoxContainer" parent="Settings/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/MaxLogLines"]
+[node name="Label" type="Label" parent="Settings/MarginContainer/VBoxContainer/MaxLogLines"]
 layout_mode = 2
 text = "Max Log Lines"
 label_settings = SubResource("LabelSettings_05tvr")
 
-[node name="Spacer" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/MaxLogLines"]
+[node name="Spacer" type="Control" parent="Settings/MarginContainer/VBoxContainer/MaxLogLines"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MaxLinesSpinBox" type="SpinBox" parent="PanelContainer/MarginContainer/VBoxContainer/MaxLogLines"]
+[node name="MaxLinesSpinBox" type="SpinBox" parent="Settings/MarginContainer/VBoxContainer/MaxLogLines"]
 layout_mode = 2
 tooltip_text = "Max amount of lines for the output log on the main screen. Set to -1 to turn off the limit (Not really recommended)."
 min_value = -1.0
@@ -575,22 +366,22 @@ max_value = 5000.0
 value = 1000.0
 script = ExtResource("11_ghaik")
 
-[node name="SettingItem5" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
+[node name="SettingItem5" parent="Settings/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
 visible = false
 layout_mode = 2
 
-[node name="Label" parent="PanelContainer/MarginContainer/VBoxContainer/SettingItem5" index="0"]
+[node name="Label" parent="Settings/MarginContainer/VBoxContainer/SettingItem5" index="0"]
 text = "Run on separate thread"
 
-[node name="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/SettingItem5" index="2"]
+[node name="CheckBox" parent="Settings/MarginContainer/VBoxContainer/SettingItem5" index="2"]
 tooltip_text = "Setting to on will keep this program from freezing while running renders. On will be slightly slower, but allows for immediate log feedback and killing the rendering process."
 
-[node name="Spacer" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Spacer" type="Control" parent="Settings/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 15)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="About" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="About" type="Button" parent="Settings/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "About
 "
@@ -599,12 +390,12 @@ text = "About
 script = ExtResource("11_214hc")
 base = NodePath("..")
 mono = NodePath("../Mono")
-current_prog_bar = NodePath("../VSplitContainer/Panel/VBoxContainer2/VBoxContainer2")
-persist_close_box = NodePath("../PanelContainer/MarginContainer/VBoxContainer/KillWProgram/CheckBox")
-shutdown_finish_box = NodePath("../PanelContainer/MarginContainer/VBoxContainer/Shutdown/CheckBox")
-thread_box = NodePath("../PanelContainer/MarginContainer/VBoxContainer/Threads/CheckBox")
-current_progress_box = NodePath("../PanelContainer/MarginContainer/VBoxContainer/CurrentProgress/CheckBox")
-max_log_lines_box = NodePath("../PanelContainer/MarginContainer/VBoxContainer/MaxLogLines/MaxLinesSpinBox")
+current_prog_bar = NodePath("../ProgressWindow/Progress/VBoxContainer2/CurrentProgressBar")
+persist_close_box = NodePath("../Settings/MarginContainer/VBoxContainer/KillWProgram/CheckBox")
+shutdown_finish_box = NodePath("../Settings/MarginContainer/VBoxContainer/Shutdown/CheckBox")
+thread_box = NodePath("../Settings/MarginContainer/VBoxContainer/Threads/CheckBox")
+current_progress_box = NodePath("../Settings/MarginContainer/VBoxContainer/CurrentProgress/CheckBox")
+max_log_lines_box = NodePath("../Settings/MarginContainer/VBoxContainer/MaxLogLines/MaxLinesSpinBox")
 
 [node name="About" parent="." instance=ExtResource("14_r2lfv")]
 visible = false
@@ -646,32 +437,236 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
-[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer2/StopProcess" to="Mono" method="_on_stop_process_pressed"]
-[connection signal="timeout" from="VSplitContainer/Panel/HBoxContainer/dots/Timer" to="VSplitContainer/Panel/HBoxContainer/dots" method="_on_timer_timeout"]
-[connection signal="visibility_changed" from="VSplitContainer/Panel/VBoxContainer" to="VSplitContainer/Panel/HBoxContainer/dots" method="_on_main_screen_visibility_changed"]
-[connection signal="text_submitted" from="VSplitContainer/Panel/VBoxContainer/HBoxContainer/InstallLoc" to="." method="_on_install_loc_text_submitted"]
-[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/HBoxContainer/SearchBlendInstall" to="." method="_on_search_blend_install_pressed"]
-[connection signal="pre_sort_children" from="VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer" to="." method="_on_render_item_container_pre_sort_children"]
-[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer/Add" to="." method="_on_add_pressed"]
-[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Folder" to="." method="_on_add_folder_pressed"]
-[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/File" to="." method="_on_add_file_pressed"]
-[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Settings" to="." method="_on_settings_pressed"]
-[connection signal="text_changed" from="VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer/OverrideLocation" to="Config" method="_on_override_location_text_changed"]
-[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Override/HBoxContainer/Override Search" to="." method="_on_override_search_pressed"]
-[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Clear" to="." method="_on_clear_pressed"]
-[connection signal="pressed" from="VSplitContainer/Panel/VBoxContainer/Add/Start" to="Mono" method="_on_start_pressed"]
-[connection signal="pressed" from="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer/ClearLogs" to="Mono" method="_on_clear_logs_pressed"]
-[connection signal="resized" from="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer/VBoxContainer" to="VSplitContainer/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer" method="_on_output_container_resized"]
-[connection signal="toggled" from="PanelContainer/MarginContainer/VBoxContainer/KillWProgram/CheckBox" to="Config" method="_on_kill_w_program_toggled"]
-[connection signal="toggled" from="PanelContainer/MarginContainer/VBoxContainer/Shutdown/CheckBox" to="Config" method="_on_shutdown_on_finish_toggled"]
-[connection signal="toggled" from="PanelContainer/MarginContainer/VBoxContainer/Threads/CheckBox" to="Config" method="_on_use_thread_toggled"]
-[connection signal="toggled" from="PanelContainer/MarginContainer/VBoxContainer/CurrentProgress/CheckBox" to="Config" method="_on_current_progress_toggled"]
-[connection signal="value_changed" from="PanelContainer/MarginContainer/VBoxContainer/MaxLogLines/MaxLinesSpinBox" to="Config" method="_on_max_lines_spin_box_value_changed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/About" to="." method="_on_about_pressed"]
-[connection signal="pressed" from="Notify/VBoxContainer/HBoxContainer/Close" to="Notify" method="_on_close_pressed"]
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[editable path="PanelContainer/MarginContainer/VBoxContainer/KillWProgram"]
-[editable path="PanelContainer/MarginContainer/VBoxContainer/Shutdown"]
-[editable path="PanelContainer/MarginContainer/VBoxContainer/Threads"]
-[editable path="PanelContainer/MarginContainer/VBoxContainer/CurrentProgress"]
-[editable path="PanelContainer/MarginContainer/VBoxContainer/SettingItem5"]
+[node name="Main" type="VSplitContainer" parent="TabContainer"]
+custom_minimum_size = Vector2(0, 650)
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="TabContainer/Main"]
+custom_minimum_size = Vector2(800, 400)
+layout_mode = 2
+size_flags_vertical = 3
+theme = SubResource("Theme_tfpa4")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Main/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Main/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="InstallLoc" type="LineEdit" parent="TabContainer/Main/Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.984314, 0.870588, 1)
+theme_override_colors/font_placeholder_color = Color(0.741176, 0.317647, 0.427451, 1)
+placeholder_text = "Blender Executable path - Must set before rendering"
+caret_blink = true
+caret_blink_interval = 0.5
+
+[node name="SearchBlendInstall" type="Button" parent="TabContainer/Main/Panel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+icon = ExtResource("3_4c6h0")
+expand_icon = true
+
+[node name="EndSpacer" type="Control" parent="TabContainer/Main/Panel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Main/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="TabContainer/Main/Panel/VBoxContainer/ScrollContainer"]
+custom_minimum_size = Vector2(1225, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="RenderItemContainer" type="VBoxContainer" parent="TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Add" type="Button" parent="TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 16
+text = "+ Add "
+
+[node name="Add" type="HBoxContainer" parent="TabContainer/Main/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Folder" type="Button" parent="TabContainer/Main/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Add Folder"
+icon = ExtResource("2_5e67o")
+expand_icon = true
+
+[node name="File" type="Button" parent="TabContainer/Main/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Add File(s)"
+icon = ExtResource("3_2a1ha")
+expand_icon = true
+
+[node name="Settings" type="Button" parent="TabContainer/Main/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Settings"
+icon = ExtResource("6_wnh0w")
+expand_icon = true
+
+[node name="Override" type="PanelContainer" parent="TabContainer/Main/Panel/VBoxContainer/Add"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_dgni0")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Main/Panel/VBoxContainer/Add/Override"]
+layout_mode = 2
+
+[node name="OverrideLocation" type="LineEdit" parent="TabContainer/Main/Panel/VBoxContainer/Add/Override/HBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Override the render output's destination? Leaving this blank will make the files render to the location specified in the Blender file."
+theme_override_colors/font_color = Color(1, 0.984314, 0.870588, 1)
+theme_override_colors/font_selected_color = Color(0, 0, 0, 1)
+theme_override_colors/font_placeholder_color = Color(0.858824, 0.839216, 0.792157, 1)
+placeholder_text = "Optional Override Destination"
+
+[node name="Override Search" type="Button" parent="TabContainer/Main/Panel/VBoxContainer/Add/Override/HBoxContainer"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+icon = ExtResource("3_4c6h0")
+expand_icon = true
+
+[node name="Spacer" type="Control" parent="TabContainer/Main/Panel/VBoxContainer/Add"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Clear" type="Button" parent="TabContainer/Main/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.203922, 0.294118, 0.407843, 1)
+theme_override_colors/font_outline_color = Color(0.156863, 0.141176, 0.180392, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_i3o85")
+text = "Clear"
+
+[node name="Start" type="Button" parent="TabContainer/Main/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.203922, 0.294118, 0.407843, 1)
+theme_override_colors/font_outline_color = Color(0.156863, 0.141176, 0.180392, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_uix7d")
+text = "Start"
+
+[node name="EndSpacer" type="Control" parent="TabContainer/Main/Panel/VBoxContainer/Add"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="TabContainer/Main"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Main/PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Main/PanelContainer/MarginContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Panel" type="PanelContainer" parent="TabContainer/Main/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_w3rkw")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Main/PanelContainer/MarginContainer/VBoxContainer/Panel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TabContainer/Main/PanelContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Output:"
+label_settings = SubResource("LabelSettings_se188")
+
+[node name="ClearLogs" type="Button" parent="TabContainer/Main/PanelContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.156863, 0.141176, 0.180392, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_o7rev")
+text = "Clear Logs"
+
+[node name="Panel2" type="PanelContainer" parent="TabContainer/Main/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 33)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_cdew4")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Main/PanelContainer/MarginContainer/VBoxContainer/Panel2" node_paths=PackedStringArray("output_container")]
+layout_mode = 2
+horizontal_scroll_mode = 0
+script = ExtResource("7_juvtn")
+output_container = NodePath("VBoxContainer")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Main/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[connection signal="about_to_popup" from="ProgressWindow" to="ProgressWindow" method="_on_about_to_popup"]
+[connection signal="close_requested" from="ProgressWindow" to="ProgressWindow" method="_on_close_requested"]
+[connection signal="timeout" from="ProgressWindow/Progress/HBoxContainer/dots/Timer" to="ProgressWindow/Progress/HBoxContainer/dots" method="_on_timer_timeout"]
+[connection signal="pressed" from="ProgressWindow/Progress/StopProcess" to="Mono" method="_on_stop_process_pressed"]
+[connection signal="toggled" from="Settings/MarginContainer/VBoxContainer/KillWProgram/CheckBox" to="Config" method="_on_kill_w_program_toggled"]
+[connection signal="toggled" from="Settings/MarginContainer/VBoxContainer/Shutdown/CheckBox" to="Config" method="_on_shutdown_on_finish_toggled"]
+[connection signal="toggled" from="Settings/MarginContainer/VBoxContainer/Threads/CheckBox" to="Config" method="_on_use_thread_toggled"]
+[connection signal="toggled" from="Settings/MarginContainer/VBoxContainer/CurrentProgress/CheckBox" to="Config" method="_on_current_progress_toggled"]
+[connection signal="value_changed" from="Settings/MarginContainer/VBoxContainer/MaxLogLines/MaxLinesSpinBox" to="Config" method="_on_max_lines_spin_box_value_changed"]
+[connection signal="pressed" from="Settings/MarginContainer/VBoxContainer/About" to="." method="_on_about_pressed"]
+[connection signal="pressed" from="Notify/VBoxContainer/HBoxContainer/Close" to="Notify" method="_on_close_pressed"]
+[connection signal="text_submitted" from="TabContainer/Main/Panel/VBoxContainer/HBoxContainer/InstallLoc" to="." method="_on_install_loc_text_submitted"]
+[connection signal="pressed" from="TabContainer/Main/Panel/VBoxContainer/HBoxContainer/SearchBlendInstall" to="." method="_on_search_blend_install_pressed"]
+[connection signal="pre_sort_children" from="TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer" to="." method="_on_render_item_container_pre_sort_children"]
+[connection signal="pressed" from="TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer/Add" to="." method="_on_add_pressed"]
+[connection signal="pressed" from="TabContainer/Main/Panel/VBoxContainer/Add/Folder" to="." method="_on_add_folder_pressed"]
+[connection signal="pressed" from="TabContainer/Main/Panel/VBoxContainer/Add/File" to="." method="_on_add_file_pressed"]
+[connection signal="pressed" from="TabContainer/Main/Panel/VBoxContainer/Add/Settings" to="." method="_on_settings_pressed"]
+[connection signal="text_changed" from="TabContainer/Main/Panel/VBoxContainer/Add/Override/HBoxContainer/OverrideLocation" to="Config" method="_on_override_location_text_changed"]
+[connection signal="pressed" from="TabContainer/Main/Panel/VBoxContainer/Add/Override/HBoxContainer/Override Search" to="." method="_on_override_search_pressed"]
+[connection signal="pressed" from="TabContainer/Main/Panel/VBoxContainer/Add/Clear" to="." method="_on_clear_pressed"]
+[connection signal="pressed" from="TabContainer/Main/Panel/VBoxContainer/Add/Start" to="Mono" method="_on_start_pressed"]
+[connection signal="pressed" from="TabContainer/Main/PanelContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer/ClearLogs" to="Mono" method="_on_clear_logs_pressed"]
+[connection signal="resized" from="TabContainer/Main/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer/VBoxContainer" to="TabContainer/Main/PanelContainer/MarginContainer/VBoxContainer/Panel2/ScrollContainer" method="_on_output_container_resized"]
+
+[editable path="Settings/MarginContainer/VBoxContainer/KillWProgram"]
+[editable path="Settings/MarginContainer/VBoxContainer/Shutdown"]
+[editable path="Settings/MarginContainer/VBoxContainer/Threads"]
+[editable path="Settings/MarginContainer/VBoxContainer/CurrentProgress"]
+[editable path="Settings/MarginContainer/VBoxContainer/SettingItem5"]

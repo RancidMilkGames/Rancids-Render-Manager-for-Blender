@@ -13,7 +13,6 @@ using Godot;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Godot.Collections;
 using FileAccess = Godot.FileAccess;
 using Object = Godot.GodotObject;
 
@@ -31,6 +30,7 @@ public partial class Mono : Node
 	[Export] public ProgressBar CurrentProgressBar;
 	[Export] public Label RunningLabel;
 	[Export] public LineEdit OverridePathLineEdit;
+	[Export] public Window ProgressWindow;
 	
 	public bool UseThreads = true;
 	public bool betterProgress = true;
@@ -69,7 +69,10 @@ public partial class Mono : Node
 	public void SetRunningProp(bool value)
 	{
 		RunningProp = value;
-		_mainPanel.Visible = !value;
+		if (RunningProp) ProgressWindow.PopupCentered();
+		else ProgressWindow.Hide();
+		//_mainPanel.Visible = !value;
+		
 	}
 
 
@@ -152,7 +155,7 @@ public partial class Mono : Node
 							outOverride += RemoveBadPathCharacters(lineEdit.Text.Split("/")[^1].Replace(".blend", "")) + "/";
 						}
 					}
-					else if (!_dirAccess.DirExists(OverridePathLineEdit.Text))
+					else if (OverridePathLineEdit.Text != "" && !_dirAccess.DirExists(OverridePathLineEdit.Text))
 					{
 						OS.Alert("The output path you have entered is not valid. Please enter a valid path or no path to use the file(s)'s output destination.", "Error");
 						break;
@@ -333,6 +336,7 @@ public partial class Mono : Node
 
 	public void GetInfo()
 	{
+		Thread.Sleep(Rng.RandiRange(100, 500));
 		if (_currentSearches >= _maxSearches)
 		{
 			return;

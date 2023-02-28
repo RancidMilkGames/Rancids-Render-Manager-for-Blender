@@ -22,4 +22,5 @@ func scroll():
 
 func _on_output_container_resized():
 	if follow_bottom:
+		@warning_ignore("narrowing_conversion")
 		scroll_vertical = output_container.size.y

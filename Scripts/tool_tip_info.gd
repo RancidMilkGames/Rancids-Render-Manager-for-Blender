@@ -10,7 +10,7 @@
 extends Control
 
 
-func _make_custom_tooltip(for_text):
+func _make_custom_tooltip(_for_text):
 	var label = load("res://Scenes/custom_tooltip.tscn").instantiate()
 	if get_theme_color("font_color").is_equal_approx(get_parent().good_sel):
 		label.text = "Start Frame: " + str(get_parent().frame_start) + "\n"

@@ -51,6 +51,7 @@ corner_detail = 5
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l4h1q"]
 
 [node name="RenderItem" type="HBoxContainer" node_paths=PackedStringArray("path", "option_button", "image_num", "searching_panel", "img_override", "anim_override", "search_label")]
+size_flags_horizontal = 3
 script = ExtResource("1_gexwk")
 path = NodePath("PathLine")
 option_button = NodePath("OptionButton")
@@ -133,22 +134,28 @@ popup/item_6/id = 6
 [node name="AnimOverride" type="OptionButton" parent="."]
 layout_mode = 2
 tooltip_text = "Animation format override."
-item_count = 7
+item_count = 10
 selected = 0
 popup/item_0/text = "NA"
 popup/item_0/id = 0
-popup/item_1/text = "AVIRAW"
-popup/item_1/id = 1
-popup/item_2/text = "AVIJPEG"
-popup/item_2/id = 2
-popup/item_3/text = "MP4"
-popup/item_3/id = 3
-popup/item_4/text = "MKV"
-popup/item_4/id = 4
+popup/item_1/text = "MP4"
+popup/item_1/id = 3
+popup/item_2/text = "MKV"
+popup/item_2/id = 4
+popup/item_3/text = "AVIRAW"
+popup/item_3/id = 1
+popup/item_4/text = "AVIJPEG"
+popup/item_4/id = 2
 popup/item_5/text = "FFMPEG"
 popup/item_5/id = 6
-popup/item_6/text = "*MPEG"
-popup/item_6/id = 5
+popup/item_6/text = "PNG"
+popup/item_6/id = 8
+popup/item_7/text = "TGA"
+popup/item_7/id = 7
+popup/item_8/text = "JPEG"
+popup/item_8/id = 9
+popup/item_9/text = "*MPEG"
+popup/item_9/id = 5
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 2
