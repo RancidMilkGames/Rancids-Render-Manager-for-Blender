@@ -147,7 +147,7 @@ public partial class Mono : Node
 					OptionButton imgOverride = control.GetNode("ImageOverride") as OptionButton;
 					OptionButton animOverride = control.GetNode("AnimOverride") as OptionButton;
 					
-					if (OverridePathLineEdit.Text != "" && _dirAccess.DirExists(OverridePathLineEdit.Text))
+					if (OverridePathLineEdit.Text != "" && DirAccess.DirExistsAbsolute(OverridePathLineEdit.Text)) //_dirAccess.DirExists(OverridePathLineEdit.Text))
 					{
 						outOverride = " " + "-o" + " " + "\"" + OverridePathLineEdit.Text + "\"";
 						if (!outOverride.EndsWith("/")) outOverride += "//";
@@ -155,9 +155,9 @@ public partial class Mono : Node
 							outOverride += RemoveBadPathCharacters(lineEdit.Text.Split("/")[^1].Replace(".blend", "")) + "/";
 						}
 					}
-					else if (OverridePathLineEdit.Text != "" && !_dirAccess.DirExists(OverridePathLineEdit.Text))
+					else if (OverridePathLineEdit.Text != "" && !DirAccess.DirExistsAbsolute(OverridePathLineEdit.Text)) //!_dirAccess.DirExists(OverridePathLineEdit.Text))
 					{
-						OS.Alert("The output path you have entered is not valid. Please enter a valid path or no path to use the file(s)'s output destination.", "Error");
+						OS.Alert("The output path you have entered is not valid. Please enter a valid path or no path to use the file(s)'s output destination." + OverridePathLineEdit.Text, "Error");
 						break;
 					}
 					var fVAnim = "";
