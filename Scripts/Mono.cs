@@ -330,17 +330,18 @@ public partial class Mono : Node
 
 	public void FileAdded() //(string path, string nodeName)
 	{
+		if (_currentSearches >= _maxSearches)
+		{
+			return;
+		}
+		_currentSearches += 1;
 		var newThread = new Thread(GetInfo);
 		newThread.Start();
 	}
 
 	public void GetInfo()
 	{
-		Thread.Sleep(Rng.RandiRange(100, 500));
-		if (_currentSearches >= _maxSearches)
-		{
-			return;
-		}
+
 		Thread.Sleep(Rng.RandiRange(100, 500));
 		var pathN = "";
 		Node cN = null;
@@ -358,7 +359,7 @@ public partial class Mono : Node
 			return;
 		}
 
-		_currentSearches += 1;
+		
 		var _newProcess = new Process();
 		_newProcess.StartInfo.Arguments =
 			"-b" + " " + "\"" + pathN + "\"" + " " + "--python-expr" + " " + scriptPath;
@@ -412,6 +413,7 @@ public partial class Mono : Node
 		}
 		
 		child.Set("locked", false);
+		_newProcess.WaitForExit();
 		_currentSearches -= 1;
 		FileAdded();
 	}
