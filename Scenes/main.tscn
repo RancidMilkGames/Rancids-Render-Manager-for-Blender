@@ -642,6 +642,7 @@ alignment = 1
 
 [connection signal="about_to_popup" from="ProgressWindow" to="ProgressWindow" method="_on_about_to_popup"]
 [connection signal="close_requested" from="ProgressWindow" to="ProgressWindow" method="_on_close_requested"]
+[connection signal="visibility_changed" from="ProgressWindow" to="ProgressWindow/Progress/HBoxContainer/dots" method="_on_main_screen_visibility_changed"]
 [connection signal="timeout" from="ProgressWindow/Progress/HBoxContainer/dots/Timer" to="ProgressWindow/Progress/HBoxContainer/dots" method="_on_timer_timeout"]
 [connection signal="pressed" from="ProgressWindow/Progress/StopProcess" to="Mono" method="_on_stop_process_pressed"]
 [connection signal="toggled" from="Settings/MarginContainer/VBoxContainer/KillWProgram/CheckBox" to="Config" method="_on_kill_w_program_toggled"]

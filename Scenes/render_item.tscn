@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://br7mdbs5gojpn"]
+[gd_scene load_steps=11 format=3 uid="uid://br7mdbs5gojpn"]
 
 [ext_resource type="Script" path="res://Scripts/render_item.gd" id="1_gexwk"]
 [ext_resource type="Script" path="res://Scripts/tool_tip_info.gd" id="2_je7lj"]
 [ext_resource type="Script" path="res://Scripts/searching_label.gd" id="3_vfurs"]
+[ext_resource type="Script" path="res://Scripts/scene_selection.gd" id="4_6862t"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_omno7"]
 content_margin_left = 10.0
@@ -50,16 +51,18 @@ corner_detail = 5
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l4h1q"]
 
-[node name="RenderItem" type="HBoxContainer" node_paths=PackedStringArray("path", "option_button", "image_num", "searching_panel", "img_override", "anim_override", "search_label")]
+[node name="RenderItem" type="HBoxContainer" node_paths=PackedStringArray("path", "option_button", "image_num", "resolution_percent", "searching_panel", "img_override", "anim_override", "search_label", "scene_selection")]
 size_flags_horizontal = 3
 script = ExtResource("1_gexwk")
 path = NodePath("PathLine")
 option_button = NodePath("OptionButton")
 image_num = NodePath("SpinBox")
+resolution_percent = NodePath("ResolutionPercent")
 searching_panel = NodePath("PathLine/PanelContainer")
 img_override = NodePath("ImageOverride")
 anim_override = NodePath("AnimOverride")
 search_label = NodePath("PathLine/PanelContainer/SearchingLabel")
+scene_selection = NodePath("SceneSelection")
 
 [node name="PathLine" type="LineEdit" parent="."]
 custom_minimum_size = Vector2(450, 0)
@@ -116,7 +119,7 @@ layout_mode = 2
 tooltip_text = "Image format override."
 item_count = 7
 selected = 0
-popup/item_0/text = "NA"
+popup/item_0/text = "Override"
 popup/item_0/id = 1
 popup/item_1/text = "TGA"
 popup/item_1/id = 0
@@ -136,7 +139,7 @@ layout_mode = 2
 tooltip_text = "Animation format override."
 item_count = 10
 selected = 0
-popup/item_0/text = "NA"
+popup/item_0/text = "Override"
 popup/item_0/id = 0
 popup/item_1/text = "MP4"
 popup/item_1/id = 3
@@ -157,6 +160,18 @@ popup/item_8/id = 9
 popup/item_9/text = "*MPEG"
 popup/item_9/id = 5
 
+[node name="SceneSelection" type="OptionButton" parent="." node_paths=PackedStringArray("render_item")]
+layout_mode = 2
+tooltip_text = "Select the scene to render."
+script = ExtResource("4_6862t")
+render_item = NodePath("..")
+
+[node name="ResolutionPercent" type="SpinBox" parent="."]
+layout_mode = 2
+tooltip_text = "Resolution Percent. At the cost of lower quality, you can render faster by reducing the percentage."
+min_value = 1.0
+value = 100.0
+
 [node name="Control" type="Control" parent="."]
 layout_mode = 2
 
@@ -175,4 +190,5 @@ text = "X"
 [connection signal="visibility_changed" from="PathLine/PanelContainer" to="PathLine/PanelContainer/SearchingLabel" method="_on_panel_container_visibility_changed"]
 [connection signal="timeout" from="PathLine/PanelContainer/SearchingLabel/Timer" to="PathLine/PanelContainer/SearchingLabel" method="_on_timer_timeout"]
 [connection signal="item_selected" from="OptionButton" to="." method="_on_option_button_item_selected"]
+[connection signal="item_selected" from="SceneSelection" to="." method="_on_scene_selection_item_selected"]
 [connection signal="pressed" from="Close" to="." method="_on_close_pressed"]

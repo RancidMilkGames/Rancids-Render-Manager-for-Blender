@@ -6,13 +6,18 @@
 
 //You should have received a copy of the GNU General Public License along with Rancid's Render Manager. If not, see <https://www.gnu.org/licenses/>. 
 
-//This program uses small bits of Blender's API. Blender is 
+//This program uses small bits of Blender's API. Blender is licensed under the GNU General Public License as well.
+
+
+
+//Please excuse the spaghetti, a refactor is in the works.
 
 using System;
 using Godot;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using Godot.Collections;
 using FileAccess = Godot.FileAccess;
 using Object = Godot.GodotObject;
 
@@ -71,8 +76,6 @@ public partial class Mono : Node
 		RunningProp = value;
 		if (RunningProp) ProgressWindow.PopupCentered();
 		else ProgressWindow.Hide();
-		//_mainPanel.Visible = !value;
-		
 	}
 
 
@@ -129,6 +132,8 @@ public partial class Mono : Node
 	public void _on_start_pressed_can_thread()
 	{
 		var count = 0f;
+		var scriptArgs = "import bpy" + "\n";
+		var renderScene = "";
 		foreach (var child in _renderItemContainer.GetChildren())
 		{
 			if (_stopPressed)
@@ -146,6 +151,13 @@ public partial class Mono : Node
 				{
 					OptionButton imgOverride = control.GetNode("ImageOverride") as OptionButton;
 					OptionButton animOverride = control.GetNode("AnimOverride") as OptionButton;
+					SpinBox resolutionPercent = control.GetNode("ResolutionPercent") as SpinBox;
+					scriptArgs += "bpy.context.scene.render.resolution_percentage=" + resolutionPercent.Value + "\n";
+					OptionButton sceneSelectionButton = control.GetNode("SceneSelection") as OptionButton;
+					if (sceneSelectionButton.Selected != -1)
+					{
+						renderScene += " " + "-S" + " " + sceneSelectionButton.GetItemText(sceneSelectionButton.Selected) + " ";
+					}
 					
 					if (OverridePathLineEdit.Text != "" && DirAccess.DirExistsAbsolute(OverridePathLineEdit.Text)) //_dirAccess.DirExists(OverridePathLineEdit.Text))
 					{
@@ -166,7 +178,7 @@ public partial class Mono : Node
 					switch ((control.GetNode("OptionButton") as OptionButton).Text)
 					{
 						case "Image":
-							if (imgOverride.Text != "NA")
+							if (imgOverride.Text != "NA" && imgOverride.Text.ToLower() != "override")
 							{
 								formatOverride = " " + "-F" + " " + imgOverride.Text.Replace("*", "") + " ";
 							}
@@ -185,7 +197,7 @@ public partial class Mono : Node
 							fVAnim = "-f " + frameToRender;
 							break;
 						case "Animation":
-							if (animOverride.Text != "NA")
+							if (animOverride.Text != "NA" && animOverride.Text.ToLower() != "override")
 							{
 								if (animOverride.Text == "MKV")
 								{
@@ -222,7 +234,7 @@ public partial class Mono : Node
 					}
 
 					
-					Render(lineEdit.Text, outOverride, fVAnim, formatOverride);
+					Render(lineEdit.Text, outOverride, fVAnim, formatOverride, renderScene, scriptArgs);
 					count++;
 					
 					ProgressBar.Value = count / (_renderItemContainer.GetChildCount() - 1) * 100;
@@ -242,7 +254,7 @@ public partial class Mono : Node
 		_stopPressed = false;
 	}
 	
-	private void Render(string blendPath, string outOverride, string fVAnim, string formatOverride)
+	private void Render(string blendPath, string outOverride, string fVAnim, string formatOverride,  string renderScene, string scriptArgs = "")
 	{
 		RunningLabel.Text = "Rendering";
 		_process.StartInfo.UseShellExecute = false;
@@ -250,7 +262,7 @@ public partial class Mono : Node
 		_process.StartInfo.WorkingDirectory = path;
 		_process.StartInfo.RedirectStandardOutput = true;
 		_process.StartInfo.FileName = _blenderInstallPath.Text; //"blender.exe";
-		_process.StartInfo.Arguments = "-b" + " " + "\"" + blendPath + "\"" + " " + "--python-expr" + " " + scriptPath + formatOverride + outOverride + " " + fVAnim;
+		_process.StartInfo.Arguments = "-b" + " " + "\"" + blendPath + "\"" + " " + "--python-expr" + " " + "\"" + scriptArgs + scriptPath + " " + formatOverride + "\"" + renderScene + outOverride + " " + fVAnim;
 		SetRunningProp(true);
 		_process.Start();
 
@@ -343,7 +355,9 @@ public partial class Mono : Node
 	{
 
 		Thread.Sleep(Rng.RandiRange(100, 500));
+		
 		var pathN = "";
+		var scriptArgs = "import bpy" + "\n";
 		Node cN = null;
 		foreach (var c in _renderItemContainer.GetChildren())
 		{
@@ -356,13 +370,18 @@ public partial class Mono : Node
 
 		if (cN == null)
 		{
+			_currentSearches -= 1;
 			return;
 		}
-
+		OptionButton sceneSelectionButton = cN.Get("scene_selection").AsGodotObject() as OptionButton;
+		if (sceneSelectionButton.Selected != -1)
+		{
+			scriptArgs += "bpy.context.window.scene=bpy.data.scenes['" + sceneSelectionButton.GetItemText(sceneSelectionButton.Selected) + "']" + "\n";
+		}
 		
 		var _newProcess = new Process();
 		_newProcess.StartInfo.Arguments =
-			"-b" + " " + "\"" + pathN + "\"" + " " + "--python-expr" + " " + scriptPath;
+			"-b" + " " + "\"" + pathN + "\"" + " " + "--python-expr" + " " + "\"" + scriptArgs + scriptPath + "\"";
 		_newProcess.StartInfo.UseShellExecute = false;
 		_newProcess.StartInfo.CreateNoWindow = true;
 		_newProcess.StartInfo.WorkingDirectory = path;
@@ -371,6 +390,8 @@ public partial class Mono : Node
 		_newProcess.Start();
 		
 		var child = cN as Control;
+		
+		
 		child.Set("locked", true);
 		while (_newProcess.StandardOutput.EndOfStream == false)
 		{
@@ -385,7 +406,6 @@ public partial class Mono : Node
 						cf += infoOutput[i].ToString();
 				}
 				child.Set("frame_current", int.Parse(cf));
-				//break;
 			}
 			else if (infoOutput.Contains("frame start"))
 			{
@@ -396,6 +416,56 @@ public partial class Mono : Node
 						sf += infoOutput[i].ToString();
 				}
 				child.Set("frame_start", int.Parse(sf));
+			}
+			else if (infoOutput.Contains("Scenes List:"))
+			{
+				Array<string> scenes = new Array<string>();
+				string curScene = "";
+				foreach (var splitString in infoOutput.Split(","))
+				{
+					foreach (var ch in splitString)
+					{
+						if (ch == "["[0])
+						{
+							curScene = "";
+							continue;
+						}
+						if (ch == " "[0] && curScene == "")
+						{
+							continue;
+						}
+
+						if (ch != "\""[0] && ch != "\'"[0] && ch != "]"[0])
+						{
+							curScene += ch;
+						}
+					}
+					scenes.Add(curScene);
+					curScene = "";
+				}
+
+				child.Set("scenes", scenes);
+			}
+			else if (infoOutput.Contains("Cameras:"))
+			{
+				Array<string> camNames = new Array<string>();
+				string curCamName = "";
+				foreach (var infoOut in infoOutput)
+				{
+					if (infoOut == "["[0])
+					{
+						curCamName = "";
+					}
+					else if (infoOut == "]"[0])
+					{
+						camNames.Add(curCamName);
+					}
+					else
+					{
+						curCamName += infoOut;
+					}
+				}
+				child.Set("cameras", camNames);
 			}
 			if (infoOutput.Contains("frame end"))
 			{

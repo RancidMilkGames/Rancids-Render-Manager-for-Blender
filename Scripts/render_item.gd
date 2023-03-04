@@ -12,10 +12,13 @@ class_name RenderItem extends HBoxContainer
 @export var path: LineEdit
 @export var option_button: OptionButton
 @export var image_num: SpinBox
+@export var resolution_percent: SpinBox
 @export var searching_panel: Control
 @export var img_override: OptionButton
 @export var anim_override: OptionButton
 @export var search_label: Label
+@export var scene_selection: OptionButton
+var last_scene_index: int = 0
 
 var bad_sel = "bd516d"
 var searching_sel = "fffbde"
@@ -38,6 +41,12 @@ var locked = false:
 		else:
 			search_label.locked = ""
 			get_tree().get_first_node_in_group("Mono").FileAdded()
+			
+var scenes = []:
+	set(s):
+		scenes = s
+		scene_selection.set_scenes()
+var cameras = []
 			
 func _ready():
 	img_override.visible = false
@@ -73,3 +82,10 @@ func _on_path_line_text_changed(new_text):
 		frame_start = -111
 		path.add_theme_color_override("font_color", Color.from_string(bad_sel, Color.WHITE))
 		searching_panel.visible = false
+
+
+func _on_scene_selection_item_selected(index):
+	if index != last_scene_index:
+		last_scene_index = index
+		searching_panel.visible = true
+		get_tree().get_first_node_in_group("Mono").FileAdded()

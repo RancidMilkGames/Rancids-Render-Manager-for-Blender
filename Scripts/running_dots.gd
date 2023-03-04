@@ -19,7 +19,7 @@ func _on_timer_timeout():
 
 
 func _on_main_screen_visibility_changed():
-	if main_screen.visible:
+	if not main_screen.visible:
 		timer.stop()
 	else:
 		timer.start()
