@@ -7,10 +7,10 @@ Easily batch render blender files without having to mess with command line. Drag
 - [ ] get samples for progress from current image
 - [ ] output log to file
 - [ ] remember queue
-- [ ] ability to re-order queue
 
 ## Done:
 
+- [x] ability to re-order queue
 - [x] Optional render output path override
 - [x] Allow default render of current frame for single image
 - [x] Select scenes from manager

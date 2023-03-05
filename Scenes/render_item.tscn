@@ -1,9 +1,26 @@
-[gd_scene load_steps=11 format=3 uid="uid://br7mdbs5gojpn"]
+[gd_scene load_steps=19 format=3 uid="uid://br7mdbs5gojpn"]
 
 [ext_resource type="Script" path="res://Scripts/render_item.gd" id="1_gexwk"]
 [ext_resource type="Script" path="res://Scripts/tool_tip_info.gd" id="2_je7lj"]
+[ext_resource type="StyleBox" uid="uid://dy01p5sp405pr" path="res://Resources/selected_render_item_style_box_flat.tres" id="2_mn2d7"]
+[ext_resource type="Texture2D" uid="uid://cimbpeeyx4j3s" path="res://Images/Grab.png" id="2_vtj6j"]
+[ext_resource type="Texture2D" uid="uid://ccsopnjy4jb00" path="res://Images/GrabBackground.png" id="3_3uug6"]
 [ext_resource type="Script" path="res://Scripts/searching_label.gd" id="3_vfurs"]
 [ext_resource type="Script" path="res://Scripts/scene_selection.gd" id="4_6862t"]
+[ext_resource type="Script" path="res://Scripts/scene_menu.gd" id="8_7mnga"]
+[ext_resource type="Texture2D" uid="uid://ckjdsc1lj48np" path="res://Images/arrowRed.png" id="8_p1fvd"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0qs60"]
+content_margin_left = 5.0
+content_margin_right = 5.0
+bg_color = Color(0.964706, 0.768627, 0.729412, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_d0eow"]
+MenuButton/styles/normal = SubResource("StyleBoxFlat_0qs60")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_omno7"]
 content_margin_left = 10.0
@@ -18,6 +35,15 @@ shadow_offset = Vector2(2, 2)
 
 [sub_resource type="LabelSettings" id="LabelSettings_ivyjm"]
 font_color = Color(0.32549, 0.470588, 0.654902, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_edaq7"]
+content_margin_left = 5.0
+content_margin_right = 5.0
+bg_color = Color(0.898039, 0.521569, 0.54902, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vxkuw"]
 content_margin_left = 10.0
@@ -51,20 +77,39 @@ corner_detail = 5
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l4h1q"]
 
-[node name="RenderItem" type="HBoxContainer" node_paths=PackedStringArray("path", "option_button", "image_num", "resolution_percent", "searching_panel", "img_override", "anim_override", "search_label", "scene_selection")]
+[node name="RenderItem" type="PanelContainer" node_paths=PackedStringArray("path", "option_button", "image_num", "resolution_percent", "searching_panel", "img_override", "anim_override", "search_label", "scene_selection", "scene_popup_menu")]
+offset_right = 854.0
+offset_bottom = 31.0
 size_flags_horizontal = 3
+theme = SubResource("Theme_d0eow")
 script = ExtResource("1_gexwk")
-path = NodePath("PathLine")
-option_button = NodePath("OptionButton")
-image_num = NodePath("SpinBox")
-resolution_percent = NodePath("ResolutionPercent")
-searching_panel = NodePath("PathLine/PanelContainer")
-img_override = NodePath("ImageOverride")
-anim_override = NodePath("AnimOverride")
-search_label = NodePath("PathLine/PanelContainer/SearchingLabel")
-scene_selection = NodePath("SceneSelection")
+path = NodePath("HBoxContainer/PathLine")
+option_button = NodePath("HBoxContainer/OptionButton")
+image_num = NodePath("HBoxContainer/SpinBox")
+resolution_percent = NodePath("HBoxContainer/ResolutionPercent")
+searching_panel = NodePath("HBoxContainer/PathLine/PanelContainer")
+img_override = NodePath("HBoxContainer/ImageOverride")
+anim_override = NodePath("HBoxContainer/AnimOverride")
+search_label = NodePath("HBoxContainer/PathLine/PanelContainer/SearchingLabel")
+scene_selection = NodePath("HBoxContainer/SceneSelection")
+selected_style_box = ExtResource("2_mn2d7")
+scene_popup_menu = NodePath("HBoxContainer/PanelContainer/MenuButton")
 
-[node name="PathLine" type="LineEdit" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Grab" type="TextureButton" parent="HBoxContainer"]
+self_modulate = Color(0.866667, 0.666667, 0.564706, 1)
+texture_filter = 1
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 6
+texture_normal = ExtResource("2_vtj6j")
+texture_hover = ExtResource("3_3uug6")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="PathLine" type="LineEdit" parent="HBoxContainer"]
 custom_minimum_size = Vector2(450, 0)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -72,7 +117,7 @@ tooltip_text = "+"
 placeholder_text = "File Path"
 script = ExtResource("2_je7lj")
 
-[node name="PanelContainer" type="PanelContainer" parent="PathLine"]
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/PathLine"]
 visible = false
 layout_mode = 1
 anchors_preset = 11
@@ -85,7 +130,7 @@ grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_omno7")
 
-[node name="SearchingLabel" type="Label" parent="PathLine/PanelContainer"]
+[node name="SearchingLabel" type="Label" parent="HBoxContainer/PathLine/PanelContainer"]
 custom_minimum_size = Vector2(95, 0)
 layout_mode = 2
 text = "Reading"
@@ -93,11 +138,11 @@ label_settings = SubResource("LabelSettings_ivyjm")
 vertical_alignment = 1
 script = ExtResource("3_vfurs")
 
-[node name="Timer" type="Timer" parent="PathLine/PanelContainer/SearchingLabel"]
+[node name="Timer" type="Timer" parent="HBoxContainer/PathLine/PanelContainer/SearchingLabel"]
 wait_time = 0.5
 autostart = true
 
-[node name="OptionButton" type="OptionButton" parent="."]
+[node name="OptionButton" type="OptionButton" parent="HBoxContainer"]
 layout_mode = 2
 item_count = 2
 selected = 0
@@ -106,23 +151,23 @@ popup/item_0/id = 0
 popup/item_1/text = "Image"
 popup/item_1/id = 1
 
-[node name="SpinBox" type="SpinBox" parent="."]
+[node name="SpinBox" type="SpinBox" parent="HBoxContainer"]
 visible = false
 layout_mode = 2
 tooltip_text = "Frame number to render. -1 Will render the current frame of the Blender image."
 min_value = -1.0
 value = -1.0
 
-[node name="ImageOverride" type="OptionButton" parent="."]
+[node name="ImageOverride" type="OptionButton" parent="HBoxContainer"]
 visible = false
 layout_mode = 2
 tooltip_text = "Image format override."
 item_count = 7
 selected = 0
 popup/item_0/text = "Override"
-popup/item_0/id = 1
+popup/item_0/id = 0
 popup/item_1/text = "TGA"
-popup/item_1/id = 0
+popup/item_1/id = 1
 popup/item_2/text = "RAWTGA"
 popup/item_2/id = 2
 popup/item_3/text = "JPEG"
@@ -134,7 +179,7 @@ popup/item_5/id = 5
 popup/item_6/text = "*TIFF"
 popup/item_6/id = 6
 
-[node name="AnimOverride" type="OptionButton" parent="."]
+[node name="AnimOverride" type="OptionButton" parent="HBoxContainer"]
 layout_mode = 2
 tooltip_text = "Animation format override."
 item_count = 10
@@ -160,22 +205,42 @@ popup/item_8/id = 9
 popup/item_9/text = "*MPEG"
 popup/item_9/id = 5
 
-[node name="SceneSelection" type="OptionButton" parent="." node_paths=PackedStringArray("render_item")]
+[node name="SceneSelection" type="OptionButton" parent="HBoxContainer" node_paths=PackedStringArray("render_item")]
+visible = false
 layout_mode = 2
 tooltip_text = "Select the scene to render."
 script = ExtResource("4_6862t")
-render_item = NodePath("..")
+render_item = NodePath("../..")
 
-[node name="ResolutionPercent" type="SpinBox" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0qs60")
+
+[node name="MenuButton" type="MenuButton" parent="HBoxContainer/PanelContainer" node_paths=PackedStringArray("render_item")]
+layout_mode = 2
+tooltip_text = "Select the scene(s) to render."
+theme_override_colors/font_color = Color(0.345098, 0.282353, 0.368627, 1)
+theme_override_colors/font_hover_color = Color(0.501961, 0.262745, 0.419608, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_0qs60")
+theme_override_styles/hover = SubResource("StyleBoxFlat_edaq7")
+text = "Scenes"
+icon = ExtResource("8_p1fvd")
+icon_alignment = 2
+switch_on_hover = true
+script = ExtResource("8_7mnga")
+render_item = NodePath("../../..")
+
+[node name="ResolutionPercent" type="SpinBox" parent="HBoxContainer"]
 layout_mode = 2
 tooltip_text = "Resolution Percent. At the cost of lower quality, you can render faster by reducing the percentage."
 min_value = 1.0
 value = 100.0
+suffix = "%"
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="HBoxContainer"]
 layout_mode = 2
 
-[node name="Close" type="Button" parent="."]
+[node name="Close" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
@@ -186,9 +251,10 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_blf1k")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_l4h1q")
 text = "X"
 
-[connection signal="text_changed" from="PathLine" to="." method="_on_path_line_text_changed"]
-[connection signal="visibility_changed" from="PathLine/PanelContainer" to="PathLine/PanelContainer/SearchingLabel" method="_on_panel_container_visibility_changed"]
-[connection signal="timeout" from="PathLine/PanelContainer/SearchingLabel/Timer" to="PathLine/PanelContainer/SearchingLabel" method="_on_timer_timeout"]
-[connection signal="item_selected" from="OptionButton" to="." method="_on_option_button_item_selected"]
-[connection signal="item_selected" from="SceneSelection" to="." method="_on_scene_selection_item_selected"]
-[connection signal="pressed" from="Close" to="." method="_on_close_pressed"]
+[connection signal="button_down" from="HBoxContainer/Grab" to="." method="_on_grab_button_down"]
+[connection signal="button_up" from="HBoxContainer/Grab" to="." method="_on_grab_button_up"]
+[connection signal="text_changed" from="HBoxContainer/PathLine" to="." method="_on_path_line_text_changed"]
+[connection signal="visibility_changed" from="HBoxContainer/PathLine/PanelContainer" to="HBoxContainer/PathLine/PanelContainer/SearchingLabel" method="_on_panel_container_visibility_changed"]
+[connection signal="timeout" from="HBoxContainer/PathLine/PanelContainer/SearchingLabel/Timer" to="HBoxContainer/PathLine/PanelContainer/SearchingLabel" method="_on_timer_timeout"]
+[connection signal="item_selected" from="HBoxContainer/OptionButton" to="." method="_on_option_button_item_selected"]
+[connection signal="pressed" from="HBoxContainer/Close" to="." method="_on_close_pressed"]

@@ -18,6 +18,7 @@ class_name Config extends Node
 @export var thread_box: CheckBox
 @export var current_progress_box: CheckBox
 @export var max_log_lines_box: SpinBox
+@export var post_process_options: OptionButton
 
 var persist_on_close = false
 var shutdown_finish = false
@@ -27,6 +28,7 @@ var current_progress = true:
 		current_progress = c
 		current_prog_bar.visible = current_progress
 var max_log_lines: int = 100
+var post_process_format = "None"
 
 func load_config():
 	if FileAccess.file_exists("user://config.cfg"):
@@ -41,17 +43,24 @@ func load_config():
 	current_progress = config.get_value("settings", "current_progress")
 	max_log_lines = config.get_value("settings", "max_log_lines")
 	
+	
 	if config.has_section_key("settings", "override_dest"):
 		base.override_dest.text = config.get_value("settings", "override_dest")
 	else:
 		save_config()
+		
+	if config.has_section_key("settings", "post_process_format"):
+		post_process_format = config.get_value("settings", "post_process_format")
 	
 	persist_close_box.set_pressed_no_signal(persist_on_close)
 	shutdown_finish_box.set_pressed_no_signal(shutdown_finish)
 	thread_box.set_pressed_no_signal(separate_thread)
 	current_progress_box.set_pressed_no_signal(current_progress)
 	max_log_lines_box.value = max_log_lines
-	
+	#post_process_format = post_process_options.get_item_text(post_process_options.get_selected_id())
+	for i in post_process_options.item_count:
+		if post_process_options.get_item_text(i) == post_process_format:
+			post_process_options.select(i)
 	
 	mono.UpdateConfig()
 
@@ -64,6 +73,7 @@ func save_config():
 	config.set_value("settings", "current_progress", current_progress)
 	config.set_value("settings", "max_log_lines", max_log_lines)
 	config.set_value("settings", "override_dest", base.override_dest.text)
+	config.set_value("settings", "post_process_format", post_process_options.get_item_text(post_process_options.get_selected_id()))
 
 	mono.UpdateConfig()
 	config.save("user://config.cfg")
@@ -97,3 +107,8 @@ func _on_max_lines_spin_box_value_changed(value):
 func _on_override_location_text_changed(new_text):
 	if DirAccess.dir_exists_absolute(new_text):
 		save_config()
+
+
+func _on_post_process_item_selected(index):
+	post_process_format = post_process_options.get_item_text(index)
+	save_config()

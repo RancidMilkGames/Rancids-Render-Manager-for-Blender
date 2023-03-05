@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://cwq8y4uu6p174"]
+[gd_scene load_steps=36 format=3 uid="uid://cwq8y4uu6p174"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_2ipsj"]
 [ext_resource type="FontFile" uid="uid://bb1ue8in033ye" path="res://Fonts/Montserrat_Alternates/MontserratAlternates-Medium.ttf" id="1_yl0ri"]
@@ -100,6 +100,9 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [sub_resource type="LabelSettings" id="LabelSettings_05tvr"]
+font_color = Color(1, 0.984314, 0.870588, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_p0x7t"]
 font_color = Color(1, 0.984314, 0.870588, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_2c4x4"]
@@ -298,12 +301,12 @@ ProgressWindow = NodePath("../ProgressWindow")
 [node name="Settings" type="PopupPanel" parent="."]
 initial_position = 1
 title = "Settings"
-size = Vector2i(315, 223)
+size = Vector2i(315, 246)
 theme_override_styles/panel = SubResource("StyleBoxFlat_8vuy0")
 
 [node name="MarginContainer" type="MarginContainer" parent="Settings"]
 offset_right = 315.0
-offset_bottom = 223.0
+offset_bottom = 246.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Settings/MarginContainer"]
 layout_mode = 2
@@ -366,6 +369,35 @@ max_value = 5000.0
 value = 1000.0
 script = ExtResource("11_ghaik")
 
+[node name="PostProcess" type="HBoxContainer" parent="Settings/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Settings/MarginContainer/VBoxContainer/PostProcess"]
+layout_mode = 2
+text = "Post Render"
+label_settings = SubResource("LabelSettings_p0x7t")
+
+[node name="Spacer" type="Control" parent="Settings/MarginContainer/VBoxContainer/PostProcess"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionButton" type="OptionButton" parent="Settings/MarginContainer/VBoxContainer/PostProcess"]
+layout_mode = 2
+tooltip_text = "Select a format to convert to when an image sequence is done rendering."
+item_count = 5
+selected = 0
+popup/item_0/text = "None"
+popup/item_0/id = 0
+popup/item_1/text = "MP4"
+popup/item_1/id = 1
+popup/item_2/text = "AVI"
+popup/item_2/id = 2
+popup/item_3/text = "THEORA/OGG"
+popup/item_3/id = 3
+popup/item_4/text = "WEBP"
+popup/item_4/id = 4
+script = ExtResource("11_ghaik")
+
 [node name="SettingItem5" parent="Settings/MarginContainer/VBoxContainer" instance=ExtResource("7_2fkv1")]
 visible = false
 layout_mode = 2
@@ -386,7 +418,7 @@ layout_mode = 2
 text = "About
 "
 
-[node name="Config" type="Node" parent="." node_paths=PackedStringArray("base", "mono", "current_prog_bar", "persist_close_box", "shutdown_finish_box", "thread_box", "current_progress_box", "max_log_lines_box") groups=["Config"]]
+[node name="Config" type="Node" parent="." node_paths=PackedStringArray("base", "mono", "current_prog_bar", "persist_close_box", "shutdown_finish_box", "thread_box", "current_progress_box", "max_log_lines_box", "post_process_options") groups=["Config"]]
 script = ExtResource("11_214hc")
 base = NodePath("..")
 mono = NodePath("../Mono")
@@ -396,6 +428,7 @@ shutdown_finish_box = NodePath("../Settings/MarginContainer/VBoxContainer/Shutdo
 thread_box = NodePath("../Settings/MarginContainer/VBoxContainer/Threads/CheckBox")
 current_progress_box = NodePath("../Settings/MarginContainer/VBoxContainer/CurrentProgress/CheckBox")
 max_log_lines_box = NodePath("../Settings/MarginContainer/VBoxContainer/MaxLogLines/MaxLinesSpinBox")
+post_process_options = NodePath("../Settings/MarginContainer/VBoxContainer/PostProcess/OptionButton")
 
 [node name="About" parent="." instance=ExtResource("14_r2lfv")]
 visible = false
@@ -503,7 +536,7 @@ size_flags_vertical = 3
 [node name="MarginContainer" type="MarginContainer" parent="TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="RenderItemContainer" type="VBoxContainer" parent="TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer"]
+[node name="RenderItemContainer" type="VBoxContainer" parent="TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer" groups=["RenderItemContainer"]]
 layout_mode = 2
 
 [node name="Add" type="Button" parent="TabContainer/Main/Panel/VBoxContainer/ScrollContainer/PanelContainer/MarginContainer/RenderItemContainer"]
@@ -650,6 +683,7 @@ alignment = 1
 [connection signal="toggled" from="Settings/MarginContainer/VBoxContainer/Threads/CheckBox" to="Config" method="_on_use_thread_toggled"]
 [connection signal="toggled" from="Settings/MarginContainer/VBoxContainer/CurrentProgress/CheckBox" to="Config" method="_on_current_progress_toggled"]
 [connection signal="value_changed" from="Settings/MarginContainer/VBoxContainer/MaxLogLines/MaxLinesSpinBox" to="Config" method="_on_max_lines_spin_box_value_changed"]
+[connection signal="item_selected" from="Settings/MarginContainer/VBoxContainer/PostProcess/OptionButton" to="Config" method="_on_post_process_item_selected"]
 [connection signal="pressed" from="Settings/MarginContainer/VBoxContainer/About" to="." method="_on_about_pressed"]
 [connection signal="pressed" from="Notify/VBoxContainer/HBoxContainer/Close" to="Notify" method="_on_close_pressed"]
 [connection signal="text_submitted" from="TabContainer/Main/Panel/VBoxContainer/HBoxContainer/InstallLoc" to="." method="_on_install_loc_text_submitted"]

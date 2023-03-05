@@ -4,4 +4,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>BlenderRenderer</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Scripts\ogg.py" />
+  </ItemGroup>
 </Project>

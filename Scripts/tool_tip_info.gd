@@ -11,12 +11,13 @@ extends Control
 
 
 func _make_custom_tooltip(_for_text):
+	var par = get_parent().get_parent()
 	var label = load("res://Scenes/custom_tooltip.tscn").instantiate()
-	if get_theme_color("font_color").is_equal_approx(get_parent().good_sel):
-		label.text = "Start Frame: " + str(get_parent().frame_start) + "\n"
-		label.text += "Current Frame: " + str(get_parent().frame_current) + "\n"
-		label.text += "End Frame: " + str(get_parent().frame_end)
-	elif get_theme_color("font_color").is_equal_approx(get_parent().searching_sel):
+	if get_theme_color("font_color").is_equal_approx(par.good_sel):
+		label.text = "Start Frame: " + str(par.frame_start) + "\n"
+		label.text += "Current Frame: " + str(par.frame_current) + "\n"
+		label.text += "End Frame: " + str(par.frame_end)
+	elif get_theme_color("font_color").is_equal_approx(par.searching_sel):
 		label.text = "Getting .blend file info."
 	else:
 		label.text = "Blender file is invalid or issue getting file info"
