@@ -21,6 +21,7 @@ class_name RenderItem extends Control
 @export var selected_style_box: StyleBoxFlat
 #@export var scene_popup: PopupMenu
 @export var scene_popup_menu: MenuButton
+@export var rendered_bar: Control
 @onready var base: BaseGUI = get_tree().get_first_node_in_group("Base")
 @onready var mono = get_tree().get_first_node_in_group("Mono")
 var last_scene_index: int = 0
@@ -57,6 +58,7 @@ func _ready():
 	set_physics_process(false)
 	img_override.visible = false
 	anim_override.visible = true
+	rendered_bar.visible = false
 	
 	
 	
@@ -112,18 +114,20 @@ func _on_grab_button_up():
 	
 func _physics_process(_delta):
 #	prints(position, get_global_mouse_position(), global_position)
+	var dir
+	var my_index
 	if get_global_mouse_position().y > global_position.y + size.y:
-		var my_index
-		for i in base.render_item_container.get_child_count():
-			if base.render_item_container.get_child(i) == self:
-				my_index = i
-		base.render_item_container.move_child(self, my_index + 1)
+		dir = 1
 	elif get_global_mouse_position().y < global_position.y - size.y:
-		var my_index
+		dir = -1
+	
+	if dir:
 		for i in base.render_item_container.get_child_count():
 			if base.render_item_container.get_child(i) == self:
 				my_index = i
-		base.render_item_container.move_child(self, my_index - 1)
+		if my_index == 0 and dir == -1:
+			return
+		base.render_item_container.move_child(self, my_index + dir)
 
 
 
@@ -131,3 +135,11 @@ func _physics_process(_delta):
 
 #func _on_popup_menu_id_pressed(id):
 #	scene_popup_menu.get_popup().set_item_checked(id, not scene_popup_menu.get_popup().is_item_checked(id))
+
+
+func _on_reset_render_pressed():
+	rendered_bar.visible = false
+
+
+func _on_free_pressed():
+	queue_free()

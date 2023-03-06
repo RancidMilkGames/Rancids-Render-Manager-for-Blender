@@ -29,6 +29,7 @@ func _ready():
 	add_child(file_dialog)
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	file_dialog.set_filters(PackedStringArray(["*.blend ; Blender files"]))
+	file_dialog.add_theme_icon_override("file", load("res://Images/blender_icon_32x32.png"))
 	file_dialog.files_selected.connect(on_files_dropped)
 	file_dialog.dir_selected.connect(on_dir_selected)
 	file_dialog.file_selected.connect(on_install_file_selected)
@@ -103,6 +104,7 @@ func _on_search_blend_install_pressed():
 
 
 func _on_install_loc_text_submitted(_new_text):
+	get_tree().get_first_node_in_group("Mono").InstallPathUpdated()
 	config.save_config()
 
 
@@ -136,3 +138,6 @@ func turn_off_override_search():
 func notify(mes):
 	notify_popup.message_label.text = mes
 	notify_popup.popup_centered()
+
+
+

@@ -7,6 +7,7 @@ Easily batch render blender files without having to mess with command line. Drag
 - [ ] get samples for progress from current image
 - [ ] output log to file
 - [ ] remember queue
+- [ ] recent folders or maybe a watch folder
 
 ## Done:
 

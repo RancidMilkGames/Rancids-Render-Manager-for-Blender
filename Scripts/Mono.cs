@@ -18,8 +18,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Godot.Collections;
+using Array = System.Array;
 using FileAccess = Godot.FileAccess;
 using Object = Godot.GodotObject;
+
 
 public partial class Mono : Node
 {
@@ -48,7 +50,7 @@ public partial class Mono : Node
     private int _animFrames = 0;
     private string postProcess = "None";
     private string scriptPath = "";
-    private string oggScript = "";
+    private string postScript = "";
     private string lastOutputPath = "";
     private string path = "";
     public bool OffOnFinish = false;
@@ -85,15 +87,24 @@ public partial class Mono : Node
     }
 
 
-    public override void _Ready()
+    public override async void _Ready()
     {
         _currentOutputItem = _outputItemScene.Instantiate() as Control;
         _outputItemContainer.AddChild(_currentOutputItem);
         scriptPath = FileAccess.GetFileAsString("res://Scripts/frame_range.py");
-        oggScript = FileAccess.GetFileAsString("res://Scripts/ogg.py");
+        postScript = FileAccess.GetFileAsString("res://Scripts/post.py");
 
-        var pathArray = _blenderInstallPath.Text.Split("/");
+        await ToSignal(GetTree().CreateTimer(1), "timeout");
+        InstallPathUpdated();
+    }
 
+    public void InstallPathUpdated()
+    {
+        var pathArray = Array.Empty<string>();
+        if (_blenderInstallPath.Text.Contains('/')) pathArray = _blenderInstallPath.Text.Split("/");
+        else if (_blenderInstallPath.Text.Contains('\\')) pathArray = _blenderInstallPath.Text.Split("\\");
+        
+        if (pathArray.Length == 0) return;
         var fileName = pathArray[pathArray.Length - 1];
         foreach (var t in pathArray)
         {
@@ -103,7 +114,7 @@ public partial class Mono : Node
             }
         }
     }
-
+    
 
     public async void _on_start_pressed()
     {
@@ -155,8 +166,10 @@ public partial class Mono : Node
                 var formatOverride = "";
 
                 if (control.GetChildCount() > 0 && control.Get("path").AsGodotObject() is LineEdit lineEdit &&
-                    lineEdit.Text.EndsWith(".blend") && FileAccess.FileExists(lineEdit.Text))
+                    lineEdit.Text.EndsWith(".blend") && FileAccess.FileExists(lineEdit.Text)
+                    && (control.Get("rendered_bar").AsGodotObject() as Control).Visible == false)
                 {
+                    var fixedPath = lineEdit.Text.Replace("\\", "/");
                     OptionButton imgOverride = control.Get("img_override").AsGodotObject() as OptionButton;
                     OptionButton animOverride = control.Get("anim_override").AsGodotObject() as OptionButton;
                     SpinBox resolutionPercent = control.Get("resolution_percent").AsGodotObject() as SpinBox;
@@ -185,11 +198,11 @@ public partial class Mono : Node
                             if (!outOverride.EndsWith("/")) outOverride += "//";
                             {
                                 lastOutputPath = "\"" + OverridePathLineEdit.Text + "/" +
-                                                 RemoveBadPathCharacters(lineEdit.Text.Split("/")[^1]
+                                                 RemoveBadPathCharacters(fixedPath.Split("/")[^1]
                                                      .Replace(".blend", "")) + "/" + RemoveBadPathCharacters(curScene) +
                                                  "/" + "\"";
                                 outOverride +=
-                                    RemoveBadPathCharacters(lineEdit.Text.Split("/")[^1].Replace(".blend", "")) + "/" +
+                                    RemoveBadPathCharacters(fixedPath.Split("/")[^1].Replace(".blend", "")) + "/" +
                                     RemoveBadPathCharacters(curScene) + "/";
                             }
                         }
@@ -211,7 +224,7 @@ public partial class Mono : Node
                             case "Image":
                                 if (imgOverride.Text != "NA" && imgOverride.Text.ToLower() != "override")
                                 {
-                                    formatOverride = " " + "-F" + " " + imgOverride.Text.Replace("*", "") + " ";
+                                    formatOverride = "-F" + " " + imgOverride.Text.Replace("*", "") + " ";
                                 }
 
                                 var frameToRender = (control.Get("image_num").AsGodotObject() as SpinBox).Value;
@@ -232,18 +245,21 @@ public partial class Mono : Node
                                 {
                                     if (animOverride.Text == "MKV")
                                     {
-                                        formatOverride = "bpy.context.scene.render.image_settings.file_format='FFMPEG'";
+                                        scriptArgs +=
+                                            "bpy.context.scene.render.image_settings.file_format='FFMPEG'" +
+                                            "\n" + "bpy.context.scene.render.ffmpeg.format='MKV'" +
+                                            "\n" + "bpy.context.scene.render.ffmpeg.codec='H264'" + "\n";
                                     }
                                     else if (animOverride.Text == "MP4")
                                     {
-                                        formatOverride =
+                                        scriptArgs +=
                                             "bpy.context.scene.render.image_settings.file_format='FFMPEG'" +
                                             "\n" + "bpy.context.scene.render.ffmpeg.format='MPEG4'" +
-                                            "\n" + "bpy.context.scene.render.ffmpeg.codec='H264'";
+                                            "\n" + "bpy.context.scene.render.ffmpeg.codec='H264'" + "\n";
                                     }
                                     else
                                     {
-                                        formatOverride = " " + "-F" + " " + animOverride.Text.Replace("*", "") + " ";
+                                        formatOverride = "-F" + " " + animOverride.Text.Replace("*", "") + " ";
                                     }
                                 }
 
@@ -266,13 +282,13 @@ public partial class Mono : Node
                         }
 
 
-                        Render(lineEdit.Text, outOverride, fVAnim, formatOverride, renderScene, scriptArgs);
+                        Render(fixedPath, outOverride, fVAnim, formatOverride, renderScene, scriptArgs);
                         count++;
                         if (postProcess != "None")
                         {
 
-                            var args = "-b" + " " + "\"" + lineEdit.Text + "\"" + " " + "--python-expr" + " " +
-                                       "\"" + oggScript.Replace("TARGETDIRECTORY", lastOutputPath)
+                            var args = "-b" + " " + "\"" + fixedPath + "\"" + " " + "--python-expr" + " " +
+                                       "\"" + postScript.Replace("TARGETDIRECTORY", lastOutputPath)
                                            .Replace("FILENAME",
                                                lastOutputPath.Remove(lastOutputPath.Length - 1) + curScene + "'")
                                            .Replace("EXTENSION",
@@ -286,9 +302,9 @@ public partial class Mono : Node
                             _process.StartInfo.RedirectStandardOutput = true;
                             _process.StartInfo.FileName = _blenderInstallPath.Text; //"blender.exe";
                             //GD.Print(args);
-                            _process.StartInfo.Arguments =
-                                args; /*+ " " + "-o" + " " + "\"" + OverridePathLineEdit.Text + "\""*/
-                            ;
+                            _process.StartInfo.Arguments = args; 
+                            /*+ " " + "-o" + " " + "\"" + OverridePathLineEdit.Text + "\""*/
+                            
                             SetRunningProp(true);
                             _process.Start();
                             while (_process.StandardOutput.EndOfStream == false)
@@ -315,7 +331,7 @@ public partial class Mono : Node
                         ProgressBar.Value = count / (_renderItemContainer.GetChildCount() - 1) * 100;
                         CurrentProgressBar.Value = 0;
                     }
-
+                    (control.Get("rendered_bar").AsGodotObject() as Control).Visible = true;
                     curScenes.Clear();
                 }
             }
@@ -324,10 +340,12 @@ public partial class Mono : Node
         ProgressBar.Value = 0;
         if (OffOnFinish && !_stopPressed)
         {
-            ProcessStartInfo startinfo = new ProcessStartInfo("shutdown.exe", "-s");
-            Process.Start(startinfo);
+            ProcessStartInfo startInfo = new ProcessStartInfo("shutdown.exe", "-s");
+            Process.Start(startInfo);
         }
 
+        _process.WaitForExit();
+        SetRunningProp(false);
         _stopPressed = false;
         ProgressWindow.Hide();
     }
@@ -342,7 +360,7 @@ public partial class Mono : Node
         _process.StartInfo.RedirectStandardOutput = true;
         _process.StartInfo.FileName = _blenderInstallPath.Text; //"blender.exe";
         _process.StartInfo.Arguments = "-b" + " " + "\"" + blendPath + "\"" + " " + "--python-expr" + " " + "\"" +
-                                       scriptArgs + scriptPath + " " + formatOverride + "\"" + renderScene +
+                                       scriptArgs + scriptPath + "\"" + " " + formatOverride + renderScene +
                                        outOverride + " " + fVAnim;
         SetRunningProp(true);
         _process.Start();
@@ -383,8 +401,8 @@ public partial class Mono : Node
             Thread.Sleep(100);
         }
 
-        _process.WaitForExit();
-        SetRunningProp(false);
+        /*_process.WaitForExit();
+        SetRunningProp(false);*/
     }
 
     public void _on_stop_process_pressed()
@@ -458,23 +476,23 @@ public partial class Mono : Node
             return;
         }
 
-        var _newProcess = new Process();
-        _newProcess.StartInfo.Arguments =
+        var newProcess = new Process();
+        newProcess.StartInfo.Arguments =
             "-b" + " " + "\"" + pathN + "\"" + " " + "--python-expr" + " " + "\"" + scriptArgs + scriptPath + "\"";
-        _newProcess.StartInfo.UseShellExecute = false;
-        _newProcess.StartInfo.CreateNoWindow = true;
-        _newProcess.StartInfo.WorkingDirectory = path;
-        _newProcess.StartInfo.RedirectStandardOutput = true;
-        _newProcess.StartInfo.FileName = _blenderInstallPath.Text;
-        _newProcess.Start();
+        newProcess.StartInfo.UseShellExecute = false;
+        newProcess.StartInfo.CreateNoWindow = true;
+        newProcess.StartInfo.WorkingDirectory = path;
+        newProcess.StartInfo.RedirectStandardOutput = true;
+        newProcess.StartInfo.FileName = _blenderInstallPath.Text;
+        newProcess.Start();
 
         var child = cN as Control;
 
 
         child.Set("locked", true);
-        while (_newProcess.StandardOutput.EndOfStream == false)
+        while (newProcess.StandardOutput.EndOfStream == false)
         {
-            var infoOutput = _newProcess.StandardOutput.ReadLine();
+            var infoOutput = newProcess.StandardOutput.ReadLine();
 
             if (infoOutput.Contains("frame current"))
             {
@@ -527,7 +545,7 @@ public partial class Mono : Node
             else if (infoOutput.Contains("Cameras:"))
             {
                 Array<string> camNames = new Array<string>();
-                string curCamName = "";
+                var curCamName = "";
                 foreach (var infoOut in infoOutput)
                 {
                     if (infoOut == "["[0])
@@ -564,7 +582,7 @@ public partial class Mono : Node
         }
 
         child.Set("locked", false);
-        _newProcess.WaitForExit();
+        newProcess.WaitForExit();
         _currentSearches -= 1;
         FileAdded();
     }
