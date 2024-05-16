@@ -1,6 +1,6 @@
 # Rancid's Render Manager for Blender
 
-Easily batch render blender files without having to mess with command line. Drag and drop files in, or select them with the program's file explorer.
+Easily batch render blender files without having to mess with command line. Drag and drop files in, or select them with the program's file explorer. Last tested with Blender 3, untested in Blender 4.
 
 ## TODO list:
 
